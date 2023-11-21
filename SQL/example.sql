@@ -80,11 +80,11 @@ CREATE TABLE Enrollments(
 
 INSERT INTO Mentor(methorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
 VALUES 
-(1, 'John', 'Doe', 'JohnDoe@gmail.com', '110 Dundas Street', 01/01/2003, 3)
+(1, 'John', 'Doe', 'JohnDoe@gmail.com', '110 Dundas Street', 01/01/2003, 3);
 
 INSERT INTO Course(courseInstructor)
 SELECT mentorID FROM Mentor;
 
-INSERT INTO Enrollments(courseID,studentID)
+INSERT INTO Enrollments(courseID, studentID)
 SELECT Course.courseID, Student.studentID
 FROM Course, Student;
