@@ -9,7 +9,6 @@ CREATE TABLE Student(
 );
 
 
-
 CREATE TABLE Mentor(
 	mentorID INT PRIMARY KEY NOT NULL,
     fName VARCHAR(50) NOT NULL, 
@@ -83,6 +82,9 @@ INSERT INTO Mentor(methorID, fName, lName, email, address, dateOfBirth, yearsOfE
 VALUES 
 (1, 'John', 'Doe', 'JohnDoe@gmail.com', '110 Dundas Street', 01/01/2003, 3)
 
+INSERT INTO Course(courseInstructor)
+SELECT mentorID FROM Mentor;
 
-
-
+INSERT INTO Enroll(courseID,studentID)
+SELECT Course.courseID, Student.studentID
+FROM Course, Student;
