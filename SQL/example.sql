@@ -1,3 +1,6 @@
+CREATE DATABASE LMS;
+USE LMS;
+
 CREATE TABLE Student(
 	studentID INT PRIMARY KEY NOT NULL, 
     fName VARCHAR(50) NOT NULL, 
@@ -7,7 +10,6 @@ CREATE TABLE Student(
     dateOfBirth Date NOT NULL, 
     emergencyContact INT
 );
-
 
 CREATE TABLE Mentor(
 	mentorID INT PRIMARY KEY NOT NULL,
@@ -19,33 +21,32 @@ CREATE TABLE Mentor(
     yearsOfExperience INT
 );
 
-
 CREATE TABLE Course(
 	courseID INT NOT NULL, 
     courseInstructor INT, 
     semester VARCHAR(255) NOT NULL, 
     courseName VARCHAR(100), 
     courseDescription TEXT,
-    prerequisite VARCHAR (255),
+    prerequisiteCourseID INT,  -- Use a separate column for the prerequisite course ID
     PRIMARY KEY (courseID, semester),
     FOREIGN KEY (courseInstructor) REFERENCES Mentor(mentorID),
-    FOREIGN KEY (prerequisite) references Course(CourseID) 
+    FOREIGN KEY (prerequisiteCourseID, semester) REFERENCES Course(courseID, semester) 
+    -- This assumes that the prerequisite course is offered in the same semester
 );
+
 -- check self reference
 
-
 CREATE TABLE ProgressReport(
-	courseID INT NOT NULL, 
+    courseID INT NOT NULL, 
     studentID INT NOT NULL, 
     semester VARCHAR(255) NOT NULL, 
     assessmentName VARCHAR(255) NOT NULL, 
     assessmentGrade VARCHAR(255),
     assessmentWeight VARCHAR(255),
     comments TEXT,
-    PRIMARY KEY (courseID, semester, studentID, assesmentName),
-    FOREIGN KEY (courseID) REFERENCES Course(courseID),
-	FOREIGN KEY (semester) REFERENCES Course(semester),
-	FOREIGN KEY (studentID) REFERENCES Student(studentID)
+    PRIMARY KEY (courseID, semester, studentID, assessmentName), -- Corrected spelling here
+    FOREIGN KEY (courseID, semester) REFERENCES Course(courseID, semester), -- Composite foreign key reference
+    FOREIGN KEY (studentID) REFERENCES Student(studentID)
 );
 
 
@@ -62,21 +63,19 @@ CREATE TABLE Attendance(
     studentID INT NOT NULL, 
     classDate Date NOT NULL,
     PRIMARY KEY (courseID, classDate, studentID),
-    FOREIGN KEY (courseID) REFERENCES Course(courseID),
-	FOREIGN KEY (classDate) REFERENCES Class(classDate),
-	FOREIGN KEY (studentID) REFERENCES Student(studentID)
+    FOREIGN KEY (courseID, classDate) REFERENCES Class(courseID, classDate),
+    FOREIGN KEY (studentID) REFERENCES Student(studentID)
 );
 
+
 CREATE TABLE Enrollments(
-	courseID INT NOT NULL,
+    courseID INT NOT NULL,
     studentID INT NOT NULL, 
     semester VARCHAR(255) NOT NULL, 
     PRIMARY KEY (courseID, semester, studentID),
-    FOREIGN KEY (courseID) REFERENCES Course(courseID),
-	FOREIGN KEY (semester) REFERENCES Course(semester),
-	FOREIGN KEY (studentID) REFERENCES Student(studentID)
+    FOREIGN KEY (courseID, semester) REFERENCES Course(courseID, semester), -- Composite foreign key
+    FOREIGN KEY (studentID) REFERENCES Student(studentID)
 );
-
 
 INSERT INTO Mentor(methorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
 VALUES 

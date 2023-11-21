@@ -4,10 +4,10 @@ import random
 
 # Database Configuration
 config = {
-    'user': 'your_username',
-    'password': 'your_password',
-    'host': '127.0.0.1',
-    'database': 'your_database_name',
+    'user': 'root',
+    'password': 'Hamhar321',
+    'host': 'localhost',
+    'database': 'LMS',
     'raise_on_warnings': True
 }
 
@@ -95,6 +95,11 @@ for _ in range(500):  # Adjust as needed for the number of enrollment records yo
     # Execute the command and add to the enrollments list
     cursor.execute(insert_enroll, enroll_data)
     enrollments.append(enroll_data)
+
+
+
+
+
 
 
 
