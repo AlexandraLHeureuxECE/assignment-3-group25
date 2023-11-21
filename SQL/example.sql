@@ -88,3 +88,30 @@ SELECT mentorID FROM Mentor;
 INSERT INTO Enrollments(courseID, studentID)
 SELECT Course.courseID, Student.studentID
 FROM Course, Student;
+
+-- Retrieve names and email address students enrolled in a specific course for a particular semester
+SELECT 
+fName, lName, email
+From Student
+JOIN Enrollments ON Student.studentID = Enrollments.studentID
+-- can change it once we have the dummy data
+WHERE Enrollments.courseID = 'YourCourseID' AND Enrollments.semester = 'YourSemester'; 
+
+-- Count the number of students enrolled in each semester
+SELECT
+semester, Count(*) AS NumberofStudents
+FROM Enrollments
+GROUP BY semester
+
+-- Count number of students in each class 
+SELECT
+    C.courseID,
+    C.classDate,
+    COUNT(DISTINCT A.studentID) AS NumberOfStudentsInClass
+FROM
+    Class AS C
+LEFT JOIN
+    Attendance AS A ON C.courseID = A.courseID AND C.classDate = A.classDate
+GROUP BY
+    C.courseID, C.classDate;
+
