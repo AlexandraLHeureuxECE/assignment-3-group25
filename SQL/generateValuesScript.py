@@ -2,6 +2,14 @@ import mysql.connector
 from faker import Faker
 import random
 
+# Database Configuration
+config = {
+    'user': 'root',
+    'password': 'Hamhar321',
+    'host': 'localhost',
+    'database': 'LMS_1',
+    'raise_on_warnings': True
+}
 
 # Establishing a Connection
 cnx = mysql.connector.connect(**config)
@@ -31,14 +39,11 @@ generated_emails = set()
 # Set to keep track of used student IDs to ensure uniqueness
 used_student_ids = set()
 
+
 # Populate Students
 students = []
-while len(students) < 300:
-    student_id = random.randint(10000, 99999)
-    if student_id in used_student_ids:
-        continue  # Skip this ID and try another if it's already been used
-    used_student_ids.add(student_id)
-
+for i in range(1, 301):  # Starting at 1, up to 300
+    student_id = i
     first_name = fake.first_name()
     last_name = fake.last_name()
     email = generate_unique_email(generated_emails)
@@ -54,31 +59,28 @@ while len(students) < 300:
     try:
         cursor.execute(insert_student, student_data)
         cnx.commit()  # Commit after each insert
-        students.append(student_data)  # Only append after successful insertion
     except mysql.connector.Error as err:
         print(f"An error occurred: {err}")
         cnx.rollback()  # Rollback in case of error
-        # Handle specific error if needed
 
 
+# Populate Mentors
+mentors = []
+for _ in range(15):  # Adjust the range based on how many mentors you want
+    mentor_id = random.randint(1000, 9999)
+    first_name = fake.first_name()
+    last_name = fake.last_name()
+    email = fake.email()
+    address = fake.address().replace("\n", ", ")
+    dob = generate_date_of_birth()
+    years_experience = random.randint(1, 40)  # Random years of experience
 
-# # Populate Mentors
-# mentors = []
-# for _ in range(15):  # Adjust the range based on how many mentors you want
-#     mentor_id = random.randint(1000, 9999)
-#     first_name = fake.first_name()
-#     last_name = fake.last_name()
-#     email = fake.email()
-#     address = fake.address().replace("\n", ", ")
-#     dob = generate_date_of_birth()
-#     years_experience = random.randint(1, 40)  # Random years of experience
+    mentor_data = (mentor_id, first_name, last_name, email, address, dob, years_experience)
+    mentors.append(mentor_data)
 
-#     mentor_data = (mentor_id, first_name, last_name, email, address, dob, years_experience)
-#     mentors.append(mentor_data)
-
-#     insert_mentor = ("INSERT INTO Mentor (mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience) "
-#                      "VALUES (%s, %s, %s, %s, %s, %s, %s)")
-#     cursor.execute(insert_mentor, mentor_data)
+    insert_mentor = ("INSERT INTO Mentor (mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience) "
+                     "VALUES (%s, %s, %s, %s, %s, %s, %s)")
+    cursor.execute(insert_mentor, mentor_data)
 
 # def generate_semester():
 #     year = random.choice(range(2021, 2024))  # Choose a year between 2021 and 2023

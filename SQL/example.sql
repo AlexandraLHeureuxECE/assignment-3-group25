@@ -28,7 +28,7 @@ CREATE TABLE Course(
     semester VARCHAR(255) NOT NULL, 
     courseName VARCHAR(100), 
     courseDescription TEXT,
-    prerequisiteCourseID INT,  -- Use a separate column for the prerequisite course ID
+    prerequisiteCourseID INT,  -- Use a separate column for the prerequisite course ID :)
     PRIMARY KEY (courseID, semester),
     FOREIGN KEY (courseInstructor) REFERENCES Mentor(mentorID),
     FOREIGN KEY (prerequisiteCourseID, semester) REFERENCES Course(courseID, semester) 
@@ -153,3 +153,4 @@ GROUP BY
 ORDER BY
     EnrollmentCount DESC
 LIMIT 2;
+
