@@ -95,7 +95,7 @@ fName, lName, email
 From Student
 JOIN Enrollments ON Student.studentID = Enrollments.studentID
 -- can change it once we have the dummy data
-WHERE Enrollments.courseID = 'YourCourseID' AND Enrollments.semester = 'YourSemester'; 
+WHERE Enrollments.courseID = 'CourseID' AND Enrollments.semester = 'Semester'; 
 
 -- Count the number of students enrolled in each semester
 SELECT
@@ -115,3 +115,41 @@ LEFT JOIN
 GROUP BY
     C.courseID, C.classDate;
 
+-- List progress reports for a specific course, semester, and student, ordered by assessment weight
+SELECT assessmentName, assessmentWeight
+FROM ProgressReport
+WHERE courseID = 'CourseID'
+  AND semester = 'Semester'
+  AND studentID = 'StudentID'
+ORDER BY assessmentWeight;
+
+-- To calculate the final grade for each student in each course
+SELECT
+    courseID,
+    studentID,
+    semester,
+    SUM(CAST(assessmentGrade AS DECIMAL) * CAST(assessmentWeight AS DECIMAL)) AS FinalGrade
+FROM
+    ProgressReport 
+GROUP BY
+    courseID, studentID, semester;
+
+-- Find the mentor with the most years of experience.
+SELECT
+    fName,
+    lName,
+    MAX(yearsOfExperience) AS MaxExperience
+FROM
+    Mentor;
+
+-- List the top 2 courses with the most enrollments
+SELECT
+    courseID,
+    COUNT(*) AS EnrollmentCount
+FROM
+    Enrollments 
+GROUP BY
+    courseID
+ORDER BY
+    EnrollmentCount DESC
+LIMIT 2;
