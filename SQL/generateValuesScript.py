@@ -81,6 +81,22 @@ for i in range(100):  # Adjust the range for the number of courses you want
                      "VALUES (%s, %s, %s, %s, %s, %s)")
     cursor.execute(insert_course, course_data)
 
+enrollments = []
+for _ in range(500):  # Adjust as needed for the number of enrollment records you want
+    # Randomly choose a student and a course with its semester
+    student_id = random.choice(students)[0]
+    course_id, course_semester = random.choice(courses)[:2]  # Only get courseID and semester
+
+    # Insert into Enroll table
+    insert_enroll = ("INSERT INTO Enroll (courseID, studentID, semester) "
+                     "VALUES (%s, %s, %s)")
+    enroll_data = (course_id, student_id, course_semester)
+    
+    # Execute the command and add to the enrollments list
+    cursor.execute(insert_enroll, enroll_data)
+    enrollments.append(enroll_data)
+
+
 
 # Repeat similar steps for other tables, ensuring data consistency
 # For example, when populating ProgressReport, use student IDs from the students list
