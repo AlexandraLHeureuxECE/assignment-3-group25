@@ -1,5 +1,6 @@
-CREATE DATABASE LMS;
-USE LMS;
+Create database LMS_1;
+use LMS_1;
+
 
 CREATE TABLE Student(
 	studentID INT PRIMARY KEY NOT NULL, 
@@ -8,7 +9,7 @@ CREATE TABLE Student(
     email VARCHAR(100) UNIQUE NOT NULL, 
     address TEXT,
     dateOfBirth Date NOT NULL, 
-    emergencyContact INT
+    emergencyContact VARCHAR(20)
 );
 
 CREATE TABLE Mentor(
