@@ -1,6 +1,3 @@
-CREATE DATABASE LMS;
-USE LMS;
-
 CREATE TABLE Student(
 	studentID INT PRIMARY KEY NOT NULL, 
     fName VARCHAR(50) NOT NULL, 
@@ -80,5 +77,12 @@ CREATE TABLE Enroll(
 	FOREIGN KEY (semester) REFERENCES Course(semester),
 	FOREIGN KEY (studentID) REFERENCES Student(studentID)
 );
-	
+
+
+INSERT INTO Mentor(methorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
+VALUES 
+(1, 'John', 'Doe', 'JohnDoe@gmail.com', '110 Dundas Street', 01/01/2003, 3)
+
+
+
 
