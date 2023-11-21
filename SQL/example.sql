@@ -67,7 +67,7 @@ CREATE TABLE Attendance(
 	FOREIGN KEY (studentID) REFERENCES Student(studentID)
 );
 
-CREATE TABLE Enroll(
+CREATE TABLE Enrollments(
 	courseID INT NOT NULL,
     studentID INT NOT NULL, 
     semester VARCHAR(255) NOT NULL, 
@@ -85,6 +85,6 @@ VALUES
 INSERT INTO Course(courseInstructor)
 SELECT mentorID FROM Mentor;
 
-INSERT INTO Enroll(courseID,studentID)
+INSERT INTO Enrollments(courseID,studentID)
 SELECT Course.courseID, Student.studentID
 FROM Course, Student;
