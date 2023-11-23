@@ -5,7 +5,7 @@ import random
 # Database Configuration
 config = {
     "user": "root",
-    "password": "",
+    "password": "Hamhar321",
     "host": "localhost",
     "database": "LMS_1",
     "raise_on_warnings": True,
@@ -137,6 +137,50 @@ for i in range(max_mentor_id + 1, max_mentor_id + 16):
     insert_mentor = "INSERT INTO Mentor (mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience) VALUES (%s, %s, %s, %s, %s, %s, %s)"
     try:
         cursor.execute(insert_mentor, mentor_data)
+    except mysql.connector.Error as err:
+        print(f"An error occurred: {err}")
+
+
+# Function to Generate Semester Data
+def generate_semester():
+    year = random.choice([2022, 2023, 2024, 2025])
+    semester = random.choice([1, 2])
+    return f"{year}-{semester}"
+
+# Fetch Existing Mentor IDs
+cursor.execute("SELECT mentorID FROM Mentor")
+mentor_ids = [row[0] for row in cursor.fetchall()]
+
+# Populate Course Table
+courses = []  # Array to hold course data
+courses_to_add = 50  # Adjust the number of courses as needed
+for i in range(1, courses_to_add + 1):
+    course_id = i
+    course_instructor = random.choice(mentor_ids)
+    semester = generate_semester()
+    
+    # You can generate or define courseName and courseDescription as needed
+    course_name = f"Course {i}"  # Example course name
+    course_description = "Description of the course"  # Example description
+
+    # For prerequisiteCourseID, either set a valid courseID or NULL
+    prerequisite_course_id = None if len(courses) == 0 else random.choice([None, random.randint(1, len(courses))])
+
+    course_data = (
+        course_id,
+        course_instructor,
+        semester,
+        course_name,
+        course_description,
+        prerequisite_course_id
+    )
+    courses.append(course_data)  # Append to courses list
+
+# Insert Courses into Database
+for course in courses:
+    insert_course = "INSERT INTO Course (courseID, courseInstructor, semester, courseName, courseDescription, prerequisiteCourseID) VALUES (%s, %s, %s, %s, %s, %s)"
+    try:
+        cursor.execute(insert_course, course)
     except mysql.connector.Error as err:
         print(f"An error occurred: {err}")
 
