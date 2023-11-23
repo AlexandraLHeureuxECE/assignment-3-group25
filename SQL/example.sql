@@ -28,7 +28,7 @@ CREATE TABLE Course(
     semester VARCHAR(255) NOT NULL, 
     courseName VARCHAR(100), 
     courseDescription TEXT,
-    prerequisiteCourseID INT,  -- Use a separate column for the prerequisite course ID :)
+    prerequisiteCourseID INT,  -- Use a separate column for the prerequisite course ID
     PRIMARY KEY (courseID, semester),
     FOREIGN KEY (courseInstructor) REFERENCES Mentor(mentorID),
     FOREIGN KEY (prerequisiteCourseID, semester) REFERENCES Course(courseID, semester) 
@@ -78,9 +78,30 @@ CREATE TABLE Enrollments(
     FOREIGN KEY (studentID) REFERENCES Student(studentID)
 );
 
-INSERT INTO Mentor(methorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
+INSERT INTO Mentor(mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
 VALUES 
-(1, 'John', 'Doe', 'JohnDoe@gmail.com', '110 Dundas Street', 01/01/2003, 3);
+(1, 'John', 'Doe', 'JohnDoe@gmail.com', '110 Dundas Street', '2003-01-01', 3);
+
+
+ALTER TABLE Course
+DROP FOREIGN KEY course_ibfk_2;
+
+ALTER TABLE Course
+ADD CONSTRAINT course_ibfk_2 FOREIGN KEY (prerequisiteCourseID, semester) REFERENCES Course(courseID, semester);
+
+SELECT * FROM Student;
+
+SELECT * FROM Mentor;
+
+SELECT * FROM Enrollments;
+
+SELECT * FROM Course;
+
+SELECT * FROM ProgressReport;
+
+SELECT * FROM Class;
+
+DELETE FROM Student;
 
 INSERT INTO Course(courseInstructor)
 SELECT mentorID FROM Mentor;
