@@ -184,6 +184,37 @@ for course in courses:
     except mysql.connector.Error as err:
         print(f"An error occurred: {err}")
 
+# Fetch Existing Course IDs and Semesters
+cursor.execute("SELECT courseID, semester FROM Course")
+courses = cursor.fetchall()  # List of tuples (courseID, semester)
+
+# Fetch Existing Student IDs
+cursor.execute("SELECT studentID FROM Student")
+student_ids = [row[0] for row in cursor.fetchall()]
+
+# Populate Enrollments Table
+enrollments = []  # Array to hold enrollment data
+enrollments_to_add = 100  # Adjust as needed
+
+enrollment_set = set()  # Use a set to track unique enrollments
+while len(enrollments) < enrollments_to_add:
+    course_id, semester = random.choice(courses)
+    student_id = random.choice(student_ids)
+    enrollment = (course_id, student_id, semester)
+
+    # Check for uniqueness before adding
+    if enrollment not in enrollment_set:
+        enrollment_set.add(enrollment)
+        enrollments.append(enrollment)  # Append to enrollments list
+
+# Insert Enrollments into Database
+for enrollment in enrollments:
+    insert_enrollment = "INSERT INTO Enrollments (courseID, studentID, semester) VALUES (%s, %s, %s)"
+    try:
+        cursor.execute(insert_enrollment, enrollment)
+    except mysql.connector.Error as err:
+        print(f"An error occurred: {err}")
+
 # Commit the mentor data
 cnx.commit()
 
