@@ -2,6 +2,14 @@ import mysql.connector
 from faker import Faker
 import random
 
+# Database Configuration
+config = {
+    'user': 'root',
+    'password': '',
+    'host': 'localhost',
+    'database': 'LMS_1',
+    'raise_on_warnings': True
+}
 
 # Establishing a Connection
 cnx = mysql.connector.connect(**config)
@@ -25,7 +33,7 @@ def generate_date_of_birth_students():
 # Helper Functions
 def generate_date_of_birth_mentors():
     # Format the date of birth to match the MySQL standard
-    return fake.date_of_birth(minimum_age=19, maximum_age=35).strftime("%Y-%m-%d")
+    return fake.date_of_birth(minimum_age=19, maximum_age=50).strftime("%Y-%m-%d")
 
 
 def generate_phone_number():
@@ -47,7 +55,7 @@ used_student_emails = set()
 # Set to keep track of used student IDs to ensure uniqueness
 used_student_ids = set(range(1, 301))  # Initialize with all possible student IDs
 
-# ...
+
 # Populate Students
 students = []
 
@@ -66,7 +74,7 @@ for i in range(max_student_id + 1, max_student_id + 1 + students_to_add):  # Sta
     
     # Generate a unique email
     email = generate_unique_email(used_student_emails)
-    used_student_emails.add(email)
+    used_student_emails.add(email)  # Ensure uniqueness
     
     address = fake.address().replace("\n", ", ")
     dob = generate_date_of_birth_students()
@@ -82,8 +90,6 @@ for i in range(max_student_id + 1, max_student_id + 1 + students_to_add):  # Sta
     except mysql.connector.Error as err:
         print(f"An error occurred: {err}")
         cnx.rollback()  # Rollback in case of error
-
-
 
 
 
@@ -135,10 +141,11 @@ for i in range(100):  # Adjust the range for the number of courses you want
     
     # Generate a unique semester
     semester = generate_semester()
-    while semester in used_course_semesters:
+    while (course_id, semester) in [(c[0], c[2]) for c in courses]:
         semester = generate_semester()
-    used_course_semesters.add(semester)
-    
+
+    used_course_semesters.add((course_id, semester))
+
     course_instructor = random.choice(mentors)[0]  # Randomly choose a mentor ID
     course_name = ' '.join(fake.words(nb=3)).title()
     course_description = fake.paragraph(nb_sentences=3)
@@ -151,7 +158,12 @@ for i in range(100):  # Adjust the range for the number of courses you want
 
     insert_course = ("INSERT INTO Course (courseID, courseInstructor, semester, courseName, courseDescription, prerequisiteCourseID) "
                      "VALUES (%s, %s, %s, %s, %s, %s)")
-    cursor.execute(insert_course, course_data)
+    try:
+        cursor.execute(insert_course, course_data)
+        cnx.commit()  # Commit after each insert
+    except mysql.connector.Error as err:
+        print(f"An error occurred: {err}")
+        cnx.rollback()  # Rollback in case of error
 
 
 
