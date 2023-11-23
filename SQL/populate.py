@@ -6,7 +6,7 @@ import datetime
 # Database Configuration
 config = {
     "user": "root",
-    "password": "Hamhar321",
+    "password": "",
     "host": "localhost",
     "database": "LMS_1",
     "raise_on_warnings": True,
@@ -222,34 +222,40 @@ def generate_class_dates(year):
     day = random.randint(1, 28)  # Using 28 to avoid invalid dates
     return datetime.date(year, month, day)
 
-# Fetch Existing Course IDs and Their Years
+# Global dictionary for tracking class dates
+global_class_dates = {}
+
+def generate_unique_class_dates(course_id, year):
+    if course_id not in global_class_dates:
+        global_class_dates[course_id] = set()
+    while True:
+        new_date = generate_class_dates(year)
+        if new_date not in global_class_dates[course_id]:
+            global_class_dates[course_id].add(new_date)
+            return new_date
+
+# Populate Class Table
+classes_per_course = 50  # Adjust as needed
+
+# Fetch Existing Course IDs and Their Semesters
 cursor.execute("SELECT courseID, semester FROM Course")
 course_data = cursor.fetchall()
 
-# Populate Class Table
-classes = []  # Array to hold class data
-class_dates_per_course = {}  # Dictionary to track class dates for each course
-classes_per_course = 30  # Adjust as needed
-
 for course_id, semester in course_data:
     year = int(semester.split('-')[0])  # Extract year from semester
-    class_dates_per_course[course_id] = set()  # Initialize an empty set for each course
 
-    while len(class_dates_per_course[course_id]) < classes_per_course:
-        class_date = generate_class_dates(year)
-        if class_date not in class_dates_per_course[course_id]:
-            class_dates_per_course[course_id].add(class_date)
-            class_description = f"Description for class on {class_date}"  # Example description
-            class_info = (course_id, class_date, class_description)
-            classes.append(class_info)  # Append to classes list
+    for _ in range(classes_per_course):
+        new_date = generate_unique_class_dates(course_id, year)
+        class_description = f"Description for class on {new_date}"  # Example description
+        class_info = (course_id, new_date, class_description)
 
-# Insert Classes into Database
-for class_info in classes:
-    insert_class = "INSERT INTO Class (courseID, classDate, classDescription) VALUES (%s, %s, %s)"
-    try:
-        cursor.execute(insert_class, class_info)
-    except mysql.connector.Error as err:
-        print(f"An error occurred: {err}")
+        insert_class = "INSERT INTO Class (courseID, classDate, classDescription) VALUES (%s, %s, %s)"
+        try:
+            cursor.execute(insert_class, class_info)
+        except mysql.connector.Error as err:
+            print(f"An error occurred: {err}")
+
+
 
 # Fetch Class Information
 cursor.execute("SELECT courseID, classDate FROM Class")
@@ -288,6 +294,62 @@ for attendance_record in attendance_records:
     insert_attendance = "INSERT INTO Attendance (courseID, studentID, classDate) VALUES (%s, %s, %s)"
     try:
         cursor.execute(insert_attendance, attendance_record)
+    except mysql.connector.Error as err:
+        print(f"An error occurred: {err}")
+
+# Function to Generate Numerical Assessment Grades
+def generate_assessment_grade():
+    return str(random.randint(0, 100))
+
+# Function to Generate Comments
+def generate_comments():
+    return fake.sentence()
+
+# Function to Generate Assessment Names
+def generate_assessment_names(num_assessments):
+    return [f"Assessment {i + 1}" for i in range(num_assessments)]
+
+# Function to Generate Evenly Distributed Assessment Weights
+def distribute_assessment_weights(num_assessments):
+    weight = 100 // num_assessments
+    weights = [weight] * num_assessments
+    remainder = 100 % num_assessments
+    for i in range(remainder):
+        weights[i] += 1
+    return weights
+
+# Populate ProgressReport Table
+progress_reports = []
+
+# Fetch Existing Enrollment Information
+cursor.execute("SELECT courseID, studentID, semester FROM Enrollments")
+enrollment_info = cursor.fetchall()
+
+# Organize enrollment data by course and student
+course_student_enrollments = {}
+for course_id, student_id, semester in enrollment_info:
+    if course_id not in course_student_enrollments:
+        course_student_enrollments[course_id] = {}
+    if student_id not in course_student_enrollments[course_id]:
+        course_student_enrollments[course_id][student_id] = semester
+
+for course_id, students in course_student_enrollments.items():
+    for student_id, semester in students.items():
+        num_assessments = random.randint(1, 5)  # Choose a random number of assessments per course
+        assessment_names = generate_assessment_names(num_assessments)
+        assessment_weights = distribute_assessment_weights(num_assessments)
+
+        for assessment_name, weight in zip(assessment_names, assessment_weights):
+            assessment_grade = generate_assessment_grade()
+            comments = generate_comments()
+            progress_report = (course_id, student_id, semester, assessment_name, assessment_grade, f"{weight}%", comments)
+            progress_reports.append(progress_report)
+
+# Insert ProgressReports into Database
+for report in progress_reports:
+    insert_report = "INSERT INTO ProgressReport (courseID, studentID, semester, assessmentName, assessmentGrade, assessmentWeight, comments) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    try:
+        cursor.execute(insert_report, report)
     except mysql.connector.Error as err:
         print(f"An error occurred: {err}")
 
