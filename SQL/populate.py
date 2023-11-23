@@ -154,7 +154,7 @@ mentor_ids = [row[0] for row in cursor.fetchall()]
 
 # Populate Course Table
 courses = []  # Array to hold course data
-courses_to_add = 20  # Adjust the number of courses as needed
+courses_to_add = 40  # Adjust the number of courses as needed
 for i in range(1, courses_to_add + 1):
     course_id = i
     course_instructor = random.choice(mentor_ids)
@@ -195,7 +195,7 @@ student_ids = [row[0] for row in cursor.fetchall()]
 
 # Populate Enrollments Table
 enrollments = []  # Array to hold enrollment data
-enrollments_to_add = 100  # Adjust as needed
+enrollments_to_add = 400  # Adjust as needed
 
 enrollment_set = set()  # Use a set to track unique enrollments
 while len(enrollments) < enrollments_to_add:
@@ -229,7 +229,7 @@ course_data = cursor.fetchall()
 # Populate Class Table
 classes = []  # Array to hold class data
 class_dates_per_course = {}  # Dictionary to track class dates for each course
-classes_per_course = 10  # Adjust as needed
+classes_per_course = 30  # Adjust as needed
 
 for course_id, semester in course_data:
     year = int(semester.split('-')[0])  # Extract year from semester
@@ -251,6 +251,48 @@ for class_info in classes:
     except mysql.connector.Error as err:
         print(f"An error occurred: {err}")
 
+# Fetch Class Information
+cursor.execute("SELECT courseID, classDate FROM Class")
+class_info = cursor.fetchall()  # List of tuples (courseID, classDate)
+
+# Fetch Enrollment Information
+cursor.execute("SELECT courseID, studentID FROM Enrollments")
+enrollment_info = cursor.fetchall()  # List of tuples (courseID, studentID)
+
+# Populate Attendance Table
+attendance_records = []  # Array to hold attendance data
+attendance_set = set()  # Use a set to track unique attendance records
+
+desired_records = 5000  # Desired number of attendance records
+
+for class_course_id, class_date in class_info:
+    for enroll_course_id, student_id in enrollment_info:
+        if len(attendance_records) >= desired_records:
+            break  # Stop if the desired number of records is reached
+
+        # Match students with the classes they are enrolled in
+        if class_course_id == enroll_course_id:
+            attendance_record = (class_course_id, student_id, class_date)
+
+            # Check for uniqueness before adding
+            if attendance_record not in attendance_set:
+                attendance_set.add(attendance_record)
+                attendance_records.append(attendance_record)  # Append to attendance records list
+
+# Break out of the nested loop if the desired record count is reached
+    if len(attendance_records) >= desired_records:
+        break
+
+# Insert Attendance Records into Database
+for attendance_record in attendance_records:
+    insert_attendance = "INSERT INTO Attendance (courseID, studentID, classDate) VALUES (%s, %s, %s)"
+    try:
+        cursor.execute(insert_attendance, attendance_record)
+    except mysql.connector.Error as err:
+        print(f"An error occurred: {err}")
+
+
+        
 # Commit the mentor data
 cnx.commit()
 
