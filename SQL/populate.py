@@ -153,7 +153,7 @@ mentor_ids = [row[0] for row in cursor.fetchall()]
 
 # Populate Course Table
 courses = []  # Array to hold course data
-courses_to_add = 50  # Adjust the number of courses as needed
+courses_to_add = 20  # Adjust the number of courses as needed
 for i in range(1, courses_to_add + 1):
     course_id = i
     course_instructor = random.choice(mentor_ids)
