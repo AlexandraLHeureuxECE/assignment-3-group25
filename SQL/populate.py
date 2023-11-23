@@ -1,6 +1,7 @@
 import mysql.connector
 from faker import Faker
 import random
+import datetime
 
 # Database Configuration
 config = {
@@ -212,6 +213,41 @@ for enrollment in enrollments:
     insert_enrollment = "INSERT INTO Enrollments (courseID, studentID, semester) VALUES (%s, %s, %s)"
     try:
         cursor.execute(insert_enrollment, enrollment)
+    except mysql.connector.Error as err:
+        print(f"An error occurred: {err}")
+
+# Function to Generate Class Dates
+def generate_class_dates(year):
+    month = random.randint(1, 12)
+    day = random.randint(1, 28)  # Using 28 to avoid invalid dates
+    return datetime.date(year, month, day)
+
+# Fetch Existing Course IDs and Their Years
+cursor.execute("SELECT courseID, semester FROM Course")
+course_data = cursor.fetchall()
+
+# Populate Class Table
+classes = []  # Array to hold class data
+class_dates_per_course = {}  # Dictionary to track class dates for each course
+classes_per_course = 10  # Adjust as needed
+
+for course_id, semester in course_data:
+    year = int(semester.split('-')[0])  # Extract year from semester
+    class_dates_per_course[course_id] = set()  # Initialize an empty set for each course
+
+    while len(class_dates_per_course[course_id]) < classes_per_course:
+        class_date = generate_class_dates(year)
+        if class_date not in class_dates_per_course[course_id]:
+            class_dates_per_course[course_id].add(class_date)
+            class_description = f"Description for class on {class_date}"  # Example description
+            class_info = (course_id, class_date, class_description)
+            classes.append(class_info)  # Append to classes list
+
+# Insert Classes into Database
+for class_info in classes:
+    insert_class = "INSERT INTO Class (courseID, classDate, classDescription) VALUES (%s, %s, %s)"
+    try:
+        cursor.execute(insert_class, class_info)
     except mysql.connector.Error as err:
         print(f"An error occurred: {err}")
 
