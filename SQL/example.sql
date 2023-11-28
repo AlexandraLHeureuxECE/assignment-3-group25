@@ -99,9 +99,17 @@ SELECT * FROM Class;
 
 DELETE FROM Student;
 
+-- Insert statements
+
 INSERT INTO Mentor(mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
 VALUES 
 (1, 'John', 'Doe', 'JohnDoe@gmail.com', '110 Dundas Street', '2003-01-01', 3);
+
+INSERT INTO ProgressReport (courseID, studentID, semester, assessmentName, assessmentGrade, assessmentWeight, comments)
+SELECT E.courseID, E.studentID, E.semester, CONCAT('Assessment_', RAND()), NULL, '20%', 'No comments'
+FROM Enrollments E
+WHERE E.courseID IN (SELECT courseID FROM Course WHERE semester = '2023-1')
+LIMIT 5;
 
 -- Retrieve names and email address students enrolled in a specific course for a particular semester
 SELECT 
