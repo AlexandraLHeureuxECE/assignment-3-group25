@@ -198,13 +198,18 @@ LIMIT 2;
 
 -- Find the mentor with the most years of experience.
 SELECT
+    mentorID,
     fName,
     lName,
     MAX(yearsOfExperience) AS MaxExperience
 FROM
-    Mentor;
+    Mentor
+GROUP BY
+    mentorID, fName, lName
+ORDER BY
+    MaxExperience DESC;
 
--- Update Statement 
+-- UPDATE STATMENT  --
 
 -- Updating Using Join
 UPDATE Course AS C
