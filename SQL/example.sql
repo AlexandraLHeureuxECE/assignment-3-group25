@@ -204,6 +204,16 @@ SELECT
 FROM
     Mentor;
 
+-- Update Statement 
+
+-- Updating Using Join
+UPDATE Course AS C
+JOIN Mentor AS M ON C.courseInstructor = M.mentorID
+SET C.courseName = CONCAT('New_', C.courseName)
+WHERE M.yearsOfExperience > 5; 
+
+
+
 -- Delete attendance records for a sepcific class 
 DELETE FROM Attendance
 WHERE courseID = 1 AND classDate = '2023-01-15';
