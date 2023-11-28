@@ -212,7 +212,11 @@ JOIN Mentor AS M ON C.courseInstructor = M.mentorID
 SET C.courseName = CONCAT('New_', C.courseName)
 WHERE M.yearsOfExperience > 5; 
 
-
+-- Updating Based on Another Table
+UPDATE Student AS S
+JOIN Enrollments AS E ON S.studentID = E.studentID
+SET S.emergencyContact = '883-299-9222'
+WHERE E.semester = '2022-1';
 
 -- Delete attendance records for a sepcific class 
 DELETE FROM Attendance
