@@ -175,3 +175,17 @@ ORDER BY
     EnrollmentCount DESC
 LIMIT 2;
 
+-- Retrieve names and email addresses of students enrolled in a specific course for a particular semester
+SELECT 
+    Student.fName,
+    Student.lName,
+    Student.email
+FROM 
+    Student
+JOIN 
+    Enrollments ON Student.studentID = Enrollments.studentID
+WHERE 
+    Enrollments.courseID = 1 -- Replace with actual course ID
+    AND Enrollments.semester = '2025-1'; -- Replace with actual semester in the format 'YYYY-S'
+   
+
