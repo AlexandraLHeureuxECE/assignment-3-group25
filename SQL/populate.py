@@ -335,7 +335,7 @@ for course_id, student_id, semester in enrollment_info:
 
 for course_id, students in course_student_enrollments.items():
     for student_id, semester in students.items():
-        num_assessments = random.randint(1, 5)  # Choose a random number of assessments per course
+        num_assessments = random.randint(5, 10)  # Choose a random number of assessments per course between 5-10
         assessment_names = generate_assessment_names(num_assessments)
         assessment_weights = distribute_assessment_weights(num_assessments)
 
@@ -352,7 +352,6 @@ for report in progress_reports:
         cursor.execute(insert_report, report)
     except mysql.connector.Error as err:
         print(f"An error occurred: {err}")
-
 
         
 # Commit the mentor data
