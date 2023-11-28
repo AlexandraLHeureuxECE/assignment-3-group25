@@ -195,3 +195,11 @@ GROUP BY
 ORDER BY
     EnrollmentCount DESC
 LIMIT 2;
+
+-- Find the mentor with the most years of experience.
+SELECT
+    fName,
+    lName,
+    MAX(yearsOfExperience) AS MaxExperience
+FROM
+    Mentor;
