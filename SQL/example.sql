@@ -137,8 +137,8 @@ FROM
 JOIN 
     Enrollments ON Student.studentID = Enrollments.studentID
 WHERE 
-    Enrollments.courseID = 1 -- Replace with actual course ID
-    AND Enrollments.semester = '2025-1'; -- Replace with actual semester in the format 'YYYY-S'
+    Enrollments.courseID = 1 
+    AND Enrollments.semester = '2022-1';
    
    
 -- Count the number of students enrolled in each semester
@@ -165,9 +165,9 @@ GROUP BY
 -- List progress reports for a specific course, semester, and student, ordered by assessment weight
 SELECT assessmentName, assessmentWeight
 FROM ProgressReport
-WHERE courseID = 3 
-  AND semester = '2023-2'
-  AND studentID = 1
+WHERE courseID = 1
+  AND semester = '2022-1'
+  AND studentID = 8
 ORDER BY assessmentWeight;
 
 -- To calculate the final grade for each student in each course
