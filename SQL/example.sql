@@ -78,10 +78,6 @@ CREATE TABLE Enrollments(
     FOREIGN KEY (studentID) REFERENCES Student(studentID)
 );
 
-INSERT INTO Mentor(mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
-VALUES 
-(1, 'John', 'Doe', 'JohnDoe@gmail.com', '110 Dundas Street', '2003-01-01', 3);
-
 
 ALTER TABLE Course
 DROP FOREIGN KEY course_ibfk_2;
@@ -103,12 +99,9 @@ SELECT * FROM Class;
 
 DELETE FROM Student;
 
-INSERT INTO Course(courseInstructor)
-SELECT mentorID FROM Mentor;
-
-INSERT INTO Enrollments(courseID, studentID)
-SELECT Course.courseID, Student.studentID
-FROM Course, Student;
+INSERT INTO Mentor(mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
+VALUES 
+(1, 'John', 'Doe', 'JohnDoe@gmail.com', '110 Dundas Street', '2003-01-01', 3);
 
 -- Retrieve names and email address students enrolled in a specific course for a particular semester
 SELECT 
