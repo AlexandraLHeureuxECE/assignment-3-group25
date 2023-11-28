@@ -215,5 +215,17 @@ JOIN
 WHERE 
     Enrollments.courseID = 1 -- Replace with actual course ID
     AND Enrollments.semester = '2025-1'; -- Replace with actual semester in the format 'YYYY-S'
+
+-- Count number of students in each class
+SELECT
+    C.courseID,
+    C.classDate,
+    COUNT(DISTINCT A.studentID) AS NumberOfStudentsInClass
+FROM
+    Class AS C
+LEFT JOIN
+    Attendance AS A ON C.courseID = A.courseID AND C.classDate = A.classDate
+GROUP BY
+    C.courseID, C.classDate;
    
 
