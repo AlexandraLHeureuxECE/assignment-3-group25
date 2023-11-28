@@ -224,3 +224,14 @@ SELECT
 FROM
     Mentor;
 
+-- To calculate the final grade for each student in each course
+SELECT
+    courseID,
+    studentID,
+    semester,
+    SUM(CAST(assessmentGrade AS DECIMAL(10,2)) * (CAST(REPLACE(assessmentWeight, '%', '') AS DECIMAL(10,2)) / 100)) AS FinalGrade
+FROM
+    ProgressReport
+GROUP BY
+    courseID, studentID, semester;
+
