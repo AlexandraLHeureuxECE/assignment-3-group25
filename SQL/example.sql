@@ -111,6 +111,23 @@ FROM Enrollments E
 WHERE E.courseID IN (SELECT courseID FROM Course WHERE semester = '2023-1')
 LIMIT 5;
 
+INSERT INTO Student (studentID, fName, lName, email, address, dateOfBirth, emergencyContact)
+SELECT 
+    12345, 
+    'Jane',
+    'Doe', 
+    'jane.doe@example.com',
+    '456 Oak Street, Anytown', 
+    '1999-04-15', 
+    '987-654-3210'
+FROM 
+    dual
+WHERE 
+    NOT EXISTS (
+        SELECT 1 FROM Student WHERE studentID = 12345
+    );
+
+
 -- Retrieve names and email address students enrolled in a specific course for a particular semester
 SELECT 
 fName, lName, email
