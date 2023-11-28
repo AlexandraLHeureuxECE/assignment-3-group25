@@ -224,9 +224,9 @@ WHERE M.yearsOfExperience > 5;
 -- Updating Based on Another Table
 UPDATE Student AS S
 JOIN Enrollments AS E ON S.studentID = E.studentID
-SET S.emergencyContact = '883-299-9222'
-WHERE E.semester = '2022-1';
+SET S.emergencyContact = '863-299-9217'
+WHERE E.semester = '2024-2';
 
 -- Delete attendance records for a sepcific class 
 DELETE FROM Attendance
-WHERE courseID = 1 AND classDate = '2023-01-15';
+WHERE courseID = 4 AND classDate = '2022-03-16';
