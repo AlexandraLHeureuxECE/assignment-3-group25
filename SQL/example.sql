@@ -180,3 +180,18 @@ FROM
     ProgressReport
 GROUP BY
     courseID, studentID, semester;
+
+-- List the top 2 courses with the most enrollments
+SELECT
+    E.courseID,
+    C.courseName,
+    COUNT(*) AS EnrollmentCount
+FROM
+    Enrollments AS E
+JOIN
+    Course AS C ON E.courseID = C.courseID
+GROUP BY
+    E.courseID, C.courseName
+ORDER BY
+    EnrollmentCount DESC
+LIMIT 2;
