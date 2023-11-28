@@ -99,7 +99,7 @@ SELECT * FROM Class;
 
 DELETE FROM Student;
 
--- Insert statements
+-- Insert statements --
 
 INSERT INTO Mentor(mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
 VALUES 
@@ -110,6 +110,7 @@ SELECT E.courseID, E.studentID, E.semester, CONCAT('Assessment_', RAND()), NULL,
 FROM Enrollments E
 WHERE E.courseID IN (SELECT courseID FROM Course WHERE semester = '2023-1')
 LIMIT 5;
+
 
 INSERT INTO Student (studentID, fName, lName, email, address, dateOfBirth, emergencyContact)
 SELECT 
@@ -126,6 +127,9 @@ WHERE
     NOT EXISTS (
         SELECT 1 FROM Student WHERE studentID = 12345
     );
+
+
+-- SELECT STATMENTS --
 
 -- Retrieve names and email addresses of students enrolled in a specific course for a particular semester
 SELECT 
