@@ -111,28 +111,7 @@ FROM Enrollments E
 WHERE E.courseID IN (SELECT courseID FROM Course WHERE semester = '2023-1')
 LIMIT 5;
 
-<<<<<<< HEAD
-INSERT INTO Student (studentID, fName, lName, email, address, dateOfBirth, emergencyContact)
-SELECT 
-    12345, 
-    'Jane',
-    'Doe', 
-    'jane.doe@example.com',
-    '456 Oak Street, Anytown', 
-    '1999-04-15', 
-    '987-654-3210'
-FROM 
-    dual
-WHERE 
-    NOT EXISTS (
-        SELECT 1 FROM Student WHERE studentID = 12345
-    );
-
-
--- Retrieve names and email address students enrolled in a specific course for a particular semester
-=======
 -- Retrieve names and email addresses of students enrolled in a specific course for a particular semester
->>>>>>> deca37228729409ff0fd09d716c48c353e550e40
 SELECT 
     Student.fName,
     Student.lName,
@@ -237,4 +216,11 @@ FROM
 GROUP BY 
     semester;
    
+-- Find the mentor with the most years of experience.
+SELECT
+    fName,
+    lName,
+    MAX(yearsOfExperience) AS MaxExperience
+FROM
+    Mentor;
 
