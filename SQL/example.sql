@@ -78,10 +78,6 @@ CREATE TABLE Enrollments(
     FOREIGN KEY (studentID) REFERENCES Student(studentID)
 );
 
-INSERT INTO Mentor(mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
-VALUES 
-(1, 'John', 'Doe', 'JohnDoe@gmail.com', '110 Dundas Street', '2003-01-01', 3);
-
 
 ALTER TABLE Course
 DROP FOREIGN KEY course_ibfk_2;
@@ -103,20 +99,52 @@ SELECT * FROM Class;
 
 DELETE FROM Student;
 
-INSERT INTO Course(courseInstructor)
-SELECT mentorID FROM Mentor;
+-- Insert statements
 
-INSERT INTO Enrollments(courseID, studentID)
-SELECT Course.courseID, Student.studentID
-FROM Course, Student;
+INSERT INTO Mentor(mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
+VALUES 
+(1, 'John', 'Doe', 'JohnDoe@gmail.com', '110 Dundas Street', '2003-01-01', 3);
+
+INSERT INTO ProgressReport (courseID, studentID, semester, assessmentName, assessmentGrade, assessmentWeight, comments)
+SELECT E.courseID, E.studentID, E.semester, CONCAT('Assessment_', RAND()), NULL, '20%', 'No comments'
+FROM Enrollments E
+WHERE E.courseID IN (SELECT courseID FROM Course WHERE semester = '2023-1')
+LIMIT 5;
+
+<<<<<<< HEAD
+INSERT INTO Student (studentID, fName, lName, email, address, dateOfBirth, emergencyContact)
+SELECT 
+    12345, 
+    'Jane',
+    'Doe', 
+    'jane.doe@example.com',
+    '456 Oak Street, Anytown', 
+    '1999-04-15', 
+    '987-654-3210'
+FROM 
+    dual
+WHERE 
+    NOT EXISTS (
+        SELECT 1 FROM Student WHERE studentID = 12345
+    );
+
 
 -- Retrieve names and email address students enrolled in a specific course for a particular semester
+=======
+-- Retrieve names and email addresses of students enrolled in a specific course for a particular semester
+>>>>>>> deca37228729409ff0fd09d716c48c353e550e40
 SELECT 
-fName, lName, email
-From Student
-JOIN Enrollments ON Student.studentID = Enrollments.studentID
--- can change it once we have the dummy data
-WHERE Enrollments.courseID = 'CourseID' AND Enrollments.semester = 'Semester'; 
+    Student.fName,
+    Student.lName,
+    Student.email
+FROM 
+    Student
+JOIN 
+    Enrollments ON Student.studentID = Enrollments.studentID
+WHERE 
+    Enrollments.courseID = 1 -- Replace with actual course ID
+    AND Enrollments.semester = '2025-1'; -- Replace with actual semester in the format 'YYYY-S'
+   
 
 -- Count the number of students enrolled in each semester
 SELECT
