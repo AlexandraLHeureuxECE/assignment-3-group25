@@ -111,13 +111,19 @@ FROM Enrollments E
 WHERE E.courseID IN (SELECT courseID FROM Course WHERE semester = '2023-1')
 LIMIT 5;
 
--- Retrieve names and email address students enrolled in a specific course for a particular semester
+-- Retrieve names and email addresses of students enrolled in a specific course for a particular semester
 SELECT 
-fName, lName, email
-From Student
-JOIN Enrollments ON Student.studentID = Enrollments.studentID
--- can change it once we have the dummy data
-WHERE Enrollments.courseID = 'CourseID' AND Enrollments.semester = 'Semester'; 
+    Student.fName,
+    Student.lName,
+    Student.email
+FROM 
+    Student
+JOIN 
+    Enrollments ON Student.studentID = Enrollments.studentID
+WHERE 
+    Enrollments.courseID = 1 -- Replace with actual course ID
+    AND Enrollments.semester = '2025-1'; -- Replace with actual semester in the format 'YYYY-S'
+   
 
 -- Count the number of students enrolled in each semester
 SELECT
