@@ -127,3 +127,56 @@ WHERE
         SELECT 1 FROM Student WHERE studentID = 12345
     );
 
+-- Retrieve names and email addresses of students enrolled in a specific course for a particular semester
+SELECT 
+    Student.fName,
+    Student.lName,
+    Student.email
+FROM 
+    Student
+JOIN 
+    Enrollments ON Student.studentID = Enrollments.studentID
+WHERE 
+    Enrollments.courseID = 1 -- Replace with actual course ID
+    AND Enrollments.semester = '2025-1'; -- Replace with actual semester in the format 'YYYY-S'
+   
+   
+-- Count the number of students enrolled in each semester
+SELECT
+    semester,
+    COUNT(studentID) AS NumberOfStudents
+FROM 
+    Enrollments
+GROUP BY 
+    semester;
+   
+-- Count number of students in each class
+SELECT
+    C.courseID,
+    C.classDate,
+    COUNT(DISTINCT A.studentID) AS NumberOfStudentsInClass
+FROM
+    Class AS C
+LEFT JOIN
+    Attendance AS A ON C.courseID = A.courseID AND C.classDate = A.classDate
+GROUP BY
+    C.courseID, C.classDate;
+
+-- List progress reports for a specific course, semester, and student, ordered by assessment weight
+SELECT assessmentName, assessmentWeight
+FROM ProgressReport
+WHERE courseID = 3 
+  AND semester = '2023-2'
+  AND studentID = 1
+ORDER BY assessmentWeight;
+
+-- To calculate the final grade for each student in each course
+SELECT
+    courseID,
+    studentID,
+    semester,
+    SUM(CAST(assessmentGrade AS DECIMAL(10,2)) * (CAST(REPLACE(assessmentWeight, '%', '') AS DECIMAL(10,2)) / 100)) AS FinalGrade
+FROM
+    ProgressReport
+GROUP BY
+    courseID, studentID, semester;
