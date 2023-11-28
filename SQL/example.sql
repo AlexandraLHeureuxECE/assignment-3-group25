@@ -227,5 +227,14 @@ LEFT JOIN
     Attendance AS A ON C.courseID = A.courseID AND C.classDate = A.classDate
 GROUP BY
     C.courseID, C.classDate;
+
+-- Count the number of students enrolled in each semester
+SELECT
+    semester,
+    COUNT(studentID) AS NumberOfStudents
+FROM 
+    Enrollments
+GROUP BY 
+    semester;
    
 
