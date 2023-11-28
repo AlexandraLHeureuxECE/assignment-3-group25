@@ -111,127 +111,19 @@ FROM Enrollments E
 WHERE E.courseID IN (SELECT courseID FROM Course WHERE semester = '2023-1')
 LIMIT 5;
 
--- Retrieve names and email addresses of students enrolled in a specific course for a particular semester
+INSERT INTO Student (studentID, fName, lName, email, address, dateOfBirth, emergencyContact)
 SELECT 
-    Student.fName,
-    Student.lName,
-    Student.email
+    12345, 
+    'Jane',
+    'Doe', 
+    'jane.doe@example.com',
+    '456 Oak Street, Anytown', 
+    '1999-04-15', 
+    '987-654-3210'
 FROM 
-    Student
-JOIN 
-    Enrollments ON Student.studentID = Enrollments.studentID
+    dual
 WHERE 
-    Enrollments.courseID = 1 -- Replace with actual course ID
-    AND Enrollments.semester = '2025-1'; -- Replace with actual semester in the format 'YYYY-S'
-   
-
--- Count the number of students enrolled in each semester
-SELECT
-semester, Count(*) AS NumberofStudents
-FROM Enrollments
-GROUP BY semester
-
--- Count number of students in each class 
-SELECT
-    C.courseID,
-    C.classDate,
-    COUNT(DISTINCT A.studentID) AS NumberOfStudentsInClass
-FROM
-    Class AS C
-LEFT JOIN
-    Attendance AS A ON C.courseID = A.courseID AND C.classDate = A.classDate
-GROUP BY
-    C.courseID, C.classDate;
-
--- List progress reports for a specific course, semester, and student, ordered by assessment weight
-SELECT assessmentName, assessmentWeight
-FROM ProgressReport
-WHERE courseID = 'CourseID'
-  AND semester = 'Semester'
-  AND studentID = 'StudentID'
-ORDER BY assessmentWeight;
-
--- To calculate the final grade for each student in each course
-SELECT
-    courseID,
-    studentID,
-    semester,
-    SUM(CAST(assessmentGrade AS DECIMAL) * CAST(assessmentWeight AS DECIMAL)) AS FinalGrade
-FROM
-    ProgressReport 
-GROUP BY
-    courseID, studentID, semester;
-
--- Find the mentor with the most years of experience.
-SELECT
-    fName,
-    lName,
-    MAX(yearsOfExperience) AS MaxExperience
-FROM
-    Mentor;
-
--- List the top 2 courses with the most enrollments
-SELECT
-    courseID,
-    COUNT(*) AS EnrollmentCount
-FROM
-    Enrollments 
-GROUP BY
-    courseID
-ORDER BY
-    EnrollmentCount DESC
-LIMIT 2;
-
--- Retrieve names and email addresses of students enrolled in a specific course for a particular semester
-SELECT 
-    Student.fName,
-    Student.lName,
-    Student.email
-FROM 
-    Student
-JOIN 
-    Enrollments ON Student.studentID = Enrollments.studentID
-WHERE 
-    Enrollments.courseID = 1 -- Replace with actual course ID
-    AND Enrollments.semester = '2025-1'; -- Replace with actual semester in the format 'YYYY-S'
-
--- Count number of students in each class
-SELECT
-    C.courseID,
-    C.classDate,
-    COUNT(DISTINCT A.studentID) AS NumberOfStudentsInClass
-FROM
-    Class AS C
-LEFT JOIN
-    Attendance AS A ON C.courseID = A.courseID AND C.classDate = A.classDate
-GROUP BY
-    C.courseID, C.classDate;
-
--- Count the number of students enrolled in each semester
-SELECT
-    semester,
-    COUNT(studentID) AS NumberOfStudents
-FROM 
-    Enrollments
-GROUP BY 
-    semester;
-   
--- Find the mentor with the most years of experience.
-SELECT
-    fName,
-    lName,
-    MAX(yearsOfExperience) AS MaxExperience
-FROM
-    Mentor;
-
--- To calculate the final grade for each student in each course
-SELECT
-    courseID,
-    studentID,
-    semester,
-    SUM(CAST(assessmentGrade AS DECIMAL(10,2)) * (CAST(REPLACE(assessmentWeight, '%', '') AS DECIMAL(10,2)) / 100)) AS FinalGrade
-FROM
-    ProgressReport
-GROUP BY
-    courseID, studentID, semester;
+    NOT EXISTS (
+        SELECT 1 FROM Student WHERE studentID = 12345
+    );
 
