@@ -203,3 +203,7 @@ SELECT
     MAX(yearsOfExperience) AS MaxExperience
 FROM
     Mentor;
+
+-- Delete attendance records for a sepcific class 
+DELETE FROM Attendance
+WHERE courseID = 1 AND classDate = '2023-01-15';
