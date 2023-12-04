@@ -99,7 +99,7 @@ SELECT * FROM Class;
 
 DELETE FROM Student;
 
--- Insert statements
+-- Insert statements --
 
 INSERT INTO Mentor(mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience)
 VALUES 
@@ -110,6 +110,7 @@ SELECT E.courseID, E.studentID, E.semester, CONCAT('Assessment_', RAND()), NULL,
 FROM Enrollments E
 WHERE E.courseID IN (SELECT courseID FROM Course WHERE semester = '2023-1')
 LIMIT 5;
+
 
 INSERT INTO Student (studentID, fName, lName, email, address, dateOfBirth, emergencyContact)
 SELECT 
@@ -127,6 +128,9 @@ WHERE
         SELECT 1 FROM Student WHERE studentID = 12345
     );
 
+
+-- SELECT STATMENTS --
+
 -- Retrieve names and email addresses of students enrolled in a specific course for a particular semester
 SELECT 
     Student.fName,
@@ -137,8 +141,8 @@ FROM
 JOIN 
     Enrollments ON Student.studentID = Enrollments.studentID
 WHERE 
-    Enrollments.courseID = 1 -- Replace with actual course ID
-    AND Enrollments.semester = '2025-1'; -- Replace with actual semester in the format 'YYYY-S'
+    Enrollments.courseID = 1 
+    AND Enrollments.semester = '2022-1';
    
    
 -- Count the number of students enrolled in each semester
@@ -165,9 +169,9 @@ GROUP BY
 -- List progress reports for a specific course, semester, and student, ordered by assessment weight
 SELECT assessmentName, assessmentWeight
 FROM ProgressReport
-WHERE courseID = 3 
-  AND semester = '2023-2'
-  AND studentID = 1
+WHERE courseID = 1
+  AND semester = '2022-1'
+  AND studentID = 8
 ORDER BY assessmentWeight;
 
 -- To calculate the final grade for each student in each course
@@ -180,3 +184,49 @@ FROM
     ProgressReport
 GROUP BY
     courseID, studentID, semester;
+
+-- List the top 2 courses with the most enrollments
+SELECT
+    E.courseID,
+    C.courseName,
+    COUNT(*) AS EnrollmentCount
+FROM
+    Enrollments AS E
+JOIN
+    Course AS C ON E.courseID = C.courseID
+GROUP BY
+    E.courseID, C.courseName
+ORDER BY
+    EnrollmentCount DESC
+LIMIT 2;
+
+-- Find the mentor with the most years of experience.
+SELECT
+    mentorID,
+    fName,
+    lName,
+    MAX(yearsOfExperience) AS MaxExperience
+FROM
+    Mentor
+GROUP BY
+    mentorID, fName, lName
+ORDER BY
+    MaxExperience DESC;
+
+-- UPDATE STATMENT  --
+
+-- Updating Using Join
+UPDATE Course AS C
+JOIN Mentor AS M ON C.courseInstructor = M.mentorID
+SET C.courseName = CONCAT('New_', C.courseName)
+WHERE M.yearsOfExperience > 5; 
+
+-- Updating Based on Another Table
+UPDATE Student AS S
+JOIN Enrollments AS E ON S.studentID = E.studentID
+SET S.emergencyContact = '863-299-9217'
+WHERE E.semester = '2024-2';
+
+-- Delete attendance records for a sepcific class 
+DELETE FROM Attendance
+WHERE courseID = 4 AND classDate = '2022-03-16';
