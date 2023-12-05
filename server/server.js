@@ -15,7 +15,7 @@ app.use(express.static('public'));
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'mARINA24222!',
+    password: 'Hamhar321',
     database: 'LMS_1'
 });
 
@@ -57,9 +57,9 @@ app.post('/login', (req, res) => {
         } else {
             if (result.length > 0) {
                 if (result[0].type === 'Student') {
-                    res.json({ redirect: '/client/StudentDash/studentDash.html' });
+                    res.json({ redirect: '/client/studentDash.html' });
                 } else if (result[0].type === 'Mentor') {
-                    res.json({ redirect: '/client/MentorDash/mentorDash.html' });
+                    res.json({ redirect: '/client/mentorDash.html' });
                 }
             } else {
                 res.status(401).send('Invalid credentials');
