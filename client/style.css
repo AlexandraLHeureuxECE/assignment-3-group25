@@ -1,0 +1,73 @@
+nav {
+    background-color: rgba(110, 121, 124, 0.856);
+    color:aliceblue;
+    outline: 2px solid #f7f7f7;
+}
+nav ul {
+    list-style-type: none; /* This removes the bullet points */
+    margin: 5.0px;
+    padding: 20.0px;
+}
+
+nav li {
+    display: inline-block; /* This will place items next to each other */
+    margin-right: 10px; /* Adjust the right margin to create space between items */
+}
+nav a {
+    text-decoration: none; /* Removes the underline from links */
+    color: rgb(236, 227, 227); /* Set the text color for the links */
+}
+#title {
+    font-size: 1.5em; /* Adjust as needed */
+    font-weight: bold;
+}
+
+body {
+    background-image: url('bg.jpg'); /* Path to your image file */
+    background-size: cover; /* Cover the entire viewport without repeating */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-attachment: fixed; /* Keep the background fixed during scroll */
+    background-position: center center; /* Center the background image */
+}
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* This will take up the full viewport height */
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.login-form label,
+.login-form input,
+.login-form button {
+    margin-bottom: 10px;
+}
+
+.login-form input,
+.login-form button {
+    padding: 8px 15px;
+    width: 200px; /* Adjust as necessary */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.login-form button {
+    background-color: rgb(76, 175, 167);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.login-form button:hover {
+    background-color: rgb(141, 174, 166);
+}
+

@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS LMS_1; -- Correctly drop the database if it exists
 Create database LMS_1;
 use LMS_1;
 
@@ -23,7 +24,7 @@ CREATE TABLE Mentor(
 );
 
 CREATE TABLE Course(
-	courseID INT NOT NULL, 
+    courseID INT NOT NULL, 
     courseInstructor INT, 
     semester VARCHAR(255) NOT NULL, 
     courseName VARCHAR(100), 
@@ -31,9 +32,9 @@ CREATE TABLE Course(
     prerequisiteCourseID INT,  -- Use a separate column for the prerequisite course ID
     PRIMARY KEY (courseID, semester),
     FOREIGN KEY (courseInstructor) REFERENCES Mentor(mentorID),
-    FOREIGN KEY (prerequisiteCourseID, semester) REFERENCES Course(courseID, semester) 
-    -- This assumes that the prerequisite course is offered in the same semester
+    FOREIGN KEY (prerequisiteCourseID) REFERENCES Course(courseID) 
 );
+
 
 -- check self reference
 
@@ -79,6 +80,9 @@ CREATE TABLE Enrollments(
 );
 
 
+ALTER TABLE Student ADD password VARCHAR(255) NOT NULL;
+ALTER TABLE Mentor ADD password VARCHAR(255) NOT NULL;
+
 ALTER TABLE Course
 DROP FOREIGN KEY course_ibfk_2;
 
@@ -96,8 +100,6 @@ SELECT * FROM Course;
 SELECT * FROM ProgressReport;
 
 SELECT * FROM Class;
-
-DELETE FROM Student;
 
 -- Insert statements --
 

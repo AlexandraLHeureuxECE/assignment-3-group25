@@ -6,7 +6,7 @@ import datetime
 # Database Configuration
 config = {
     "user": "root",
-    "password": "",
+    "password": "Amjad1947-",
     "host": "localhost",
     "database": "LMS_1",
     "raise_on_warnings": True,
@@ -65,6 +65,10 @@ def generate_unique_email(existing_emails, first_name, last_name):
     return email
 
 
+def generate_password(name):
+    return f"{name}{random.randint(1000, 9999)}"
+
+
 # Sets to keep track of unique values
 generated_emails = set()
 used_student_emails = set()
@@ -88,7 +92,7 @@ for i in range(max_student_id + 1, max_student_id + 1 + students_to_add):
     address = fake.address().replace("\n", ", ")  # Generate address
     dob = generate_date_of_birth_students()  # Generate date of birth
     emergency_contact = generate_phone_number()  # Generate emergency contact
-
+    password = generate_password(first_name)  # Generate password
     student_data = (
         student_id,
         first_name,
@@ -97,10 +101,11 @@ for i in range(max_student_id + 1, max_student_id + 1 + students_to_add):
         address,
         dob,
         emergency_contact,
+        password,  # Add password here
     )
     students.append(student_data)  # Append to students list
 
-    insert_student = "INSERT INTO Student (studentID, fName, lName, email, address, dateOfBirth, emergencyContact) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    insert_student = "INSERT INTO Student (studentID, fName, lName, email, address, dateOfBirth, emergencyContact, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     try:
         cursor.execute(insert_student, student_data)
         existing_student_ids.add(student_id)  # Add this line here
@@ -123,7 +128,7 @@ for i in range(max_mentor_id + 1, max_mentor_id + 16):
     address = fake.address().replace("\n", ", ")
     dob = generate_date_of_birth_mentors()
     years_experience = random.randint(1, 40)
-
+    password = generate_password(first_name)  # Generate password
     mentor_data = (
         mentor_id,
         first_name,
@@ -132,10 +137,11 @@ for i in range(max_mentor_id + 1, max_mentor_id + 16):
         address,
         dob,
         years_experience,
+        password,  # Add password here
     )
     mentors.append(mentor_data)  # Append to mentors list
 
-    insert_mentor = "INSERT INTO Mentor (mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    insert_mentor = "INSERT INTO Mentor (mentorID, fName, lName, email, address, dateOfBirth, yearsOfExperience, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     try:
         cursor.execute(insert_mentor, mentor_data)
     except mysql.connector.Error as err:
@@ -148,6 +154,7 @@ def generate_semester():
     semester = random.choice([1, 2])
     return f"{year}-{semester}"
 
+
 # Fetch Existing Mentor IDs
 cursor.execute("SELECT mentorID FROM Mentor")
 mentor_ids = [row[0] for row in cursor.fetchall()]
@@ -159,13 +166,17 @@ for i in range(1, courses_to_add + 1):
     course_id = i
     course_instructor = random.choice(mentor_ids)
     semester = generate_semester()
-    
+
     # You can generate or define courseName and courseDescription as needed
     course_name = f"Course {i}"  # Example course name
     course_description = "Description of the course"  # Example description
 
     # For prerequisiteCourseID, either set a valid courseID or NULL
-    prerequisite_course_id = None if len(courses) == 0 else random.choice([None, random.randint(1, len(courses))])
+    prerequisite_course_id = (
+        None
+        if len(courses) == 0
+        else random.choice([None, random.randint(1, len(courses))])
+    )
 
     course_data = (
         course_id,
@@ -173,7 +184,7 @@ for i in range(1, courses_to_add + 1):
         semester,
         course_name,
         course_description,
-        prerequisite_course_id
+        prerequisite_course_id,
     )
     courses.append(course_data)  # Append to courses list
 
@@ -210,11 +221,14 @@ while len(enrollments) < enrollments_to_add:
 
 # Insert Enrollments into Database
 for enrollment in enrollments:
-    insert_enrollment = "INSERT INTO Enrollments (courseID, studentID, semester) VALUES (%s, %s, %s)"
+    insert_enrollment = (
+        "INSERT INTO Enrollments (courseID, studentID, semester) VALUES (%s, %s, %s)"
+    )
     try:
         cursor.execute(insert_enrollment, enrollment)
     except mysql.connector.Error as err:
         print(f"An error occurred: {err}")
+
 
 # Function to Generate Class Dates
 def generate_class_dates(year):
@@ -222,8 +236,10 @@ def generate_class_dates(year):
     day = random.randint(1, 28)  # Using 28 to avoid invalid dates
     return datetime.date(year, month, day)
 
+
 # Global dictionary for tracking class dates
 global_class_dates = {}
+
 
 def generate_unique_class_dates(course_id, year):
     if course_id not in global_class_dates:
@@ -234,6 +250,7 @@ def generate_unique_class_dates(course_id, year):
             global_class_dates[course_id].add(new_date)
             return new_date
 
+
 # Populate Class Table
 classes_per_course = 50  # Adjust as needed
 
@@ -242,11 +259,13 @@ cursor.execute("SELECT courseID, semester FROM Course")
 course_data = cursor.fetchall()
 
 for course_id, semester in course_data:
-    year = int(semester.split('-')[0])  # Extract year from semester
+    year = int(semester.split("-")[0])  # Extract year from semester
 
     for _ in range(classes_per_course):
         new_date = generate_unique_class_dates(course_id, year)
-        class_description = f"Description for class on {new_date}"  # Example description
+        class_description = (
+            f"Description for class on {new_date}"  # Example description
+        )
         class_info = (course_id, new_date, class_description)
 
         insert_class = "INSERT INTO Class (courseID, classDate, classDescription) VALUES (%s, %s, %s)"
@@ -254,8 +273,6 @@ for course_id, semester in course_data:
             cursor.execute(insert_class, class_info)
         except mysql.connector.Error as err:
             print(f"An error occurred: {err}")
-
-
 
 # Fetch Class Information
 cursor.execute("SELECT courseID, classDate FROM Class")
@@ -283,31 +300,39 @@ for class_course_id, class_date in class_info:
             # Check for uniqueness before adding
             if attendance_record not in attendance_set:
                 attendance_set.add(attendance_record)
-                attendance_records.append(attendance_record)  # Append to attendance records list
+                attendance_records.append(
+                    attendance_record
+                )  # Append to attendance records list
 
-# Break out of the nested loop if the desired record count is reached
+    # Break out of the nested loop if the desired record count is reached
     if len(attendance_records) >= desired_records:
         break
 
 # Insert Attendance Records into Database
 for attendance_record in attendance_records:
-    insert_attendance = "INSERT INTO Attendance (courseID, studentID, classDate) VALUES (%s, %s, %s)"
+    insert_attendance = (
+        "INSERT INTO Attendance (courseID, studentID, classDate) VALUES (%s, %s, %s)"
+    )
     try:
         cursor.execute(insert_attendance, attendance_record)
     except mysql.connector.Error as err:
         print(f"An error occurred: {err}")
 
+
 # Function to Generate Numerical Assessment Grades
 def generate_assessment_grade():
     return str(random.randint(0, 100))
+
 
 # Function to Generate Comments
 def generate_comments():
     return fake.sentence()
 
+
 # Function to Generate Assessment Names
 def generate_assessment_names(num_assessments):
     return [f"Assessment {i + 1}" for i in range(num_assessments)]
+
 
 # Function to Generate Evenly Distributed Assessment Weights
 def distribute_assessment_weights(num_assessments):
@@ -317,6 +342,7 @@ def distribute_assessment_weights(num_assessments):
     for i in range(remainder):
         weights[i] += 1
     return weights
+
 
 # Populate ProgressReport Table
 progress_reports = []
@@ -335,14 +361,24 @@ for course_id, student_id, semester in enrollment_info:
 
 for course_id, students in course_student_enrollments.items():
     for student_id, semester in students.items():
-        num_assessments = random.randint(5, 10)  # Choose a random number of assessments per course between 5-10
+        num_assessments = random.randint(
+            5, 10
+        )  # Choose a random number of assessments per course between 5-10
         assessment_names = generate_assessment_names(num_assessments)
         assessment_weights = distribute_assessment_weights(num_assessments)
 
         for assessment_name, weight in zip(assessment_names, assessment_weights):
             assessment_grade = generate_assessment_grade()
             comments = generate_comments()
-            progress_report = (course_id, student_id, semester, assessment_name, assessment_grade, f"{weight}%", comments)
+            progress_report = (
+                course_id,
+                student_id,
+                semester,
+                assessment_name,
+                assessment_grade,
+                f"{weight}%",
+                comments,
+            )
             progress_reports.append(progress_report)
 
 # Insert ProgressReports into Database
@@ -353,7 +389,7 @@ for report in progress_reports:
     except mysql.connector.Error as err:
         print(f"An error occurred: {err}")
 
-        
+
 # Commit the mentor data
 cnx.commit()
 
