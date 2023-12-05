@@ -69,6 +69,51 @@ app.post('/login', (req, res) => {
 });
 
 
+// Route to get courses taught by a mentor and the students enrolled in those courses
+app.get('/get-mentor-courses', (req, res) => {
+    const mentorId = req.query.mentorId;
+
+    const query = `
+        SELECT c.courseID, c.courseName, s.studentID, s.fName, s.lName
+        FROM Course c
+        JOIN Enrollments e ON c.courseID = e.courseID
+        JOIN Student s ON e.studentID = s.studentID
+        WHERE c.courseInstructor = ?
+    `;
+
+    db.query(query, [mentorId], (err, results) => {
+        if (err) {
+            res.status(500).send('Error in database operation');
+        } else {
+            // Group students by course
+            const courses = {};
+            results.forEach(row => {
+                if (!courses[row.courseID]) {
+                    courses[row.courseID] = {
+                        courseName: row.courseName,
+                        students: []
+                    };
+                }
+                courses[row.courseID].students.push({
+                    studentID: row.studentID,
+                    fName: row.fName,
+                    lName: row.lName
+                });
+            });
+
+            // Convert to array
+            const coursesArray = Object.keys(courses).map(courseID => ({
+                courseID: courseID,
+                courseName: courses[courseID].courseName,
+                students: courses[courseID].students
+            }));
+
+            res.json(coursesArray);
+        }
+    });
+});
+
+
 
 
 // Start server

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Courses - LMS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .courses-container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .course {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .course-title {
+            font-size: 20px;
+            color: #333;
+        }
+        .student-list {
+            margin-top: 10px;
+        }
+        .student {
+            border-bottom: 1px solid #eee;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="courses-container" id="coursesContainer">
+        <!-- Courses will be loaded here by JavaScript -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mentorId = JSON.parse(localStorage.getItem('user')).id;
+
+            // This should match the hostname and port of your Express server.
+            fetch(`http://localhost:3000/get-mentor-courses?mentorId=${mentorId}`)
+
+                .then(response => response.json())
+                .then(courses => {
+                    const container = document.getElementById('coursesContainer');
+                    container.innerHTML = ''; // Clear any existing content
+                    courses.forEach(course => {
+                        const courseElement = document.createElement('div');
+                        courseElement.className = 'course';
+                        courseElement.innerHTML = `
+                            <div class="course-title">${course.courseName}</div>
+                            <div class="student-list">
+                                ${course.students.map(student => `
+                                    <div class="student">
+                                        ${student.fName} ${student.lName}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        container.appendChild(courseElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching mentor courses:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>
