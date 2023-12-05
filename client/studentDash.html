@@ -1,36 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="style.css">
-   <title>Student Dashboard - LMS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Student Dashboard - LMS</title>
 </head>
+
 <body>
 
 
-<header>
-   <nav>
-       <ul>
-           <li><a href="studentDash/courses.html">Courses</a></li>
-           <li class="separator">|</li>
-           <li><a href="studentDash/enrollments.html">Enrollments</a></li>
-           <li class="separator">|</li>
-           <li><a href="studentDash/progressReports.html">Progress Reports</a></li>
-           <li class="separator">|</li>
-           
-       </ul>
-   </nav>
-</header>
+    <header>
+        <h1 id="dashboardTitle">STUDENT DASHBOARD</h1>
+        <nav>
+            <ul>
+                <li><a href="studentDash/courses.html">Courses</a></li>
+                <li class="separator">|</li>
+                <li><a href="studentDash/enrollments.html">Enrollments</a></li>
+                <li class="separator">|</li>
+                <li><a href="studentDash/progressReports.html">Progress Reports</a></li>
+                <li class="separator">|</li>
+
+            </ul>
+        </nav>
+    </header>
 
 
-<main class="dashboard-container">
-   <!-- Content for dashboard home page goes here -->
+    <main class="dashboard-container">
+        <!-- Content for dashboard home page goes here -->
 
 
-</main>
-
-
-<script src="script.js"></script>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                document.getElementById('dashboardTitle').textContent = `${user.fName} ${user.lName}'s DASHBOARD`;
+            }
+        });
+    </script>
 </body>
+
 </html>

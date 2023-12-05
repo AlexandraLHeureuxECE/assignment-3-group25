@@ -26,10 +26,20 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     .then(data => {
         if (data.redirect) {
             // Redirect based on the response
+            localStorage.setItem('user', JSON.stringify(data.user));
             window.location.href = data.redirect;
         }
     })
     .catch(error => {
         console.error('Error:', error);
     });
+});
+
+
+// Example JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    var user = JSON.parse(localStorage.getItem('user'));
+    if(user) {
+        document.getElementById('userName').textContent = `Welcome, ${user.fName} ${user.lName}`;
+    }
 });

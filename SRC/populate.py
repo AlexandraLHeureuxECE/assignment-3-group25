@@ -6,7 +6,7 @@ import datetime
 # Database Configuration
 config = {
     "user": "root",
-    "password": "Amjad1947-",
+    "password": "",
     "host": "localhost",
     "database": "LMS_1",
     "raise_on_warnings": True,

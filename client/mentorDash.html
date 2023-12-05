@@ -10,7 +10,7 @@
 
 <body>
     <div class="mentor-dashboard">
-        <h1>MENTOR DASHBOARD</h1>
+        <h1 id="dashboardTitle">MENTOR DASHBOARD</h1>
         <nav class="dashboard-menu">
             <ul>
                 <li><a href="MentorDash/course-content.html" class="dashboard-link">Course Content</a></li>
@@ -27,6 +27,14 @@
             </ul>
         </nav>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                document.getElementById('dashboardTitle').textContent = `${user.fName} ${user.lName}'s DASHBOARD`;
+            }
+        });
+    </script>
 </body>
 
 </html>

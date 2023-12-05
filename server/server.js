@@ -15,7 +15,7 @@ app.use(express.static('public'));
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'Hamhar321',
+    password: '',
     database: 'LMS_1'
 });
 
@@ -47,26 +47,27 @@ app.use((req, res, next) => {
 });
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
-    let query = `SELECT 'Student' as type FROM Student WHERE email = ? AND password = ?
+    let query = `SELECT studentID as id, fName, lName, 'Student' as type FROM Student WHERE email = ? AND password = ?
                  UNION
-                 SELECT 'Mentor' as type FROM Mentor WHERE email = ? AND password = ?`;
+                 SELECT mentorID as id, fName, lName, 'Mentor' as type FROM Mentor WHERE email = ? AND password = ?`;
 
     db.query(query, [email, password, email, password], (err, result) => {
         if (err) {
             res.status(500).send('Error in database operation');
         } else {
             if (result.length > 0) {
-                if (result[0].type === 'Student') {
-                    res.json({ redirect: '/client/studentDash.html' });
-                } else if (result[0].type === 'Mentor') {
-                    res.json({ redirect: '/client/mentorDash.html' });
-                }
+                const user = result[0];
+                res.json({ 
+                    redirect: user.type === 'Student' ? '/client/studentDash.html' : '/client/mentorDash.html',
+                    user: { id: user.id, fName: user.fName, lName: user.lName, type: user.type }
+                });
             } else {
                 res.status(401).send('Invalid credentials');
             }
         }
     });
 });
+
 
 
 
