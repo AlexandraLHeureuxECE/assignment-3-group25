@@ -1,75 +1,183 @@
-<!DOCTYPE html>
+​​<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mentor Courses - LMS</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .courses-container {
-            width: 80%;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .course {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        .course-title {
-            font-size: 20px;
-            color: #333;
-        }
-        .student-list {
-            margin-top: 10px;
-        }
-        .student {
-            border-bottom: 1px solid #eee;
-            padding: 5px;
-        }
-    </style>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Mentor Courses - LMS</title>
+   <style>
+       body {
+           font-family: Arial, sans-serif;
+           background-color: #f4f4f4;
+           margin: 0;
+           padding: 0;
+       }
+       .courses-container {
+           width: 80%;
+           margin: 20px auto;
+           padding: 20px;
+           background-color: #fff;
+           box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+       }
+       .course {
+           border: 1px solid #ddd;
+           padding: 10px;
+           margin-bottom: 10px;
+       }
+       .course-title {
+           font-size: 20px;
+           color: #333;
+           margin-bottom: 5px;
+       }
+       .student-list {
+           margin-top: 10px;
+       }
+       .student {
+           border-bottom: 1px solid #eee;
+           padding: 5px;
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+       }
+       .remove-student {
+           cursor: pointer;
+           color: red;
+           font-size: 0.8rem;
+           padding: 3px 5px;
+           border: none;
+           background-color: transparent;
+       }
+       .form-container {
+           margin-bottom: 20px;
+           background-color: #fff;
+           padding: 20px;
+           box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+       }
+       form {
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+           margin-bottom: 10px;
+       }
+       input, button {
+           padding: 10px;
+           margin-right: 5px;
+           border: 1px solid #ddd;
+           border-radius: 4px;
+       }
+       button {
+           background-color: #5cb85c;
+           color: white;
+           border: none;
+           cursor: pointer;
+           transition: background-color 0.3s ease;
+       }
+       button:hover {
+           background-color: #4cae4c;
+       }
+   </style>
 </head>
-
 <body>
-    <div class="courses-container" id="coursesContainer">
-        <!-- Courses will be loaded here by JavaScript -->
-    </div>
+   <div class="form-container">
+       <h2>Add/Remove Student</h2>
+       <form id="addStudentForm">
+           <input type="text" id="addStudentID" placeholder="Student ID" required>
+           <input type="text" id="courseID" placeholder="Course ID" required>
+           <button type="submit">Add Student</button>
+       </form>
+       <form id="removeStudentForm">
+           <input type="text" id="removeStudentID" placeholder="Student ID" required>
+           <input type="text" id="removeCourseID" placeholder="Course ID" required>
+           <button type="submit">Remove Student</button>
+       </form>
+   </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const mentorId = JSON.parse(localStorage.getItem('user')).id;
 
-            // This should match the hostname and port of your Express server.
-            fetch(`http://localhost:3000/get-mentor-courses?mentorId=${mentorId}`)
+   <div class="courses-container" id="coursesContainer">
+       <!-- Courses will be loaded here by JavaScript -->
+   </div>
 
-                .then(response => response.json())
-                .then(courses => {
-                    const container = document.getElementById('coursesContainer');
-                    container.innerHTML = ''; // Clear any existing content
-                    courses.forEach(course => {
-                        const courseElement = document.createElement('div');
-                        courseElement.className = 'course';
-                        courseElement.innerHTML = `
-                            <div class="course-title">${course.courseName}</div>
-                            <div class="student-list">
-                                ${course.students.map(student => `
-                                    <div class="student">
-                                        ${student.fName} ${student.lName}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        `;
-                        container.appendChild(courseElement);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching mentor courses:', error);
-                });
-        });
-    </script>
+
+   <script>
+       document.addEventListener('DOMContentLoaded', function () {
+           const mentorId = JSON.parse(localStorage.getItem('user')).id;
+
+
+           // This should match the hostname and port of your Express server.
+           fetch(`http://localhost:3000/get-mentor-courses?mentorId=${mentorId}`)
+               .then(response => response.json())
+               .then(courses => {
+                   const container = document.getElementById('coursesContainer');
+                   container.innerHTML = ''; // Clear any existing content
+                   courses.forEach(course => {
+                       const courseElement = document.createElement('div');
+                       courseElement.className = 'course';
+                       courseElement.innerHTML = `
+                           <div class="course-title">${course.courseName}</div>
+                           <div class="student-list">
+                               ${course.students.map(student => `
+                                   <div class="student">
+                                       ${student.fName} ${student.lName}
+                                       <button class="remove-student" onclick="removeStudent(${student.studentID}, ${course.courseID})">Remove</button>
+                                   </div>
+                               `).join('')}
+                           </div>
+                       `;
+                       container.appendChild(courseElement);
+                   });
+               })
+               .catch(error => {
+                   console.error('Error fetching mentor courses:', error);
+               });
+
+
+           document.getElementById('addStudentForm').addEventListener('submit', function(e) {
+               e.preventDefault();
+               var studentId = document.getElementById('addStudentID').value;
+               var courseId = document.getElementById('courseID').value;
+               addOrRemoveStudent('add', studentId, courseId);
+           });
+
+
+           document.getElementById('removeStudentForm').addEventListener('submit', function(e) {
+               e.preventDefault();
+               var studentId = document.getElementById('removeStudentID').value;
+               var courseId = document.getElementById('removeCourseID').value;
+               addOrRemoveStudent('remove', studentId, courseId);
+           });
+       });
+
+
+       function addOrRemoveStudent(action, studentId, courseId) {
+           const url = `http://localhost:3000/${action}-student`;
+           const formData = new URLSearchParams();
+           formData.append('studentId', studentId);
+           formData.append('courseId', courseId);
+
+
+           fetch(url, {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/x-www-form-urlencoded',
+               },
+               body: formData
+           })
+           .then(response => {
+               if (response.ok) {
+                   alert('Operation successful');
+                   location.reload(); // Reload to update the list
+               } else {
+                   alert('Operation failed');
+               }
+           })
+           .catch(error => alert('Error: ' + error.message));
+       }
+
+
+       function removeStudent(studentId, courseId) {
+           addOrRemoveStudent('remove', studentId, courseId);
+       }
+   </script>
 </body>
-
 </html>
+
+

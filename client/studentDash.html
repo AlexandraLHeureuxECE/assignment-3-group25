@@ -21,7 +21,7 @@
                 <li class="separator">|</li>
                 <li><a href="studentDash/progressReports.html">Progress Reports</a></li>
                 <li class="separator">|</li>
-
+                <li><a href="javascript:void(0);" id="logoutLink" class="dashboard-link">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -38,7 +38,17 @@
             if (user) {
                 document.getElementById('dashboardTitle').textContent = `${user.fName} ${user.lName}'s DASHBOARD`;
             }
+            document.getElementById('logoutLink').addEventListener('click', logoutUser); // If using link
+
+            function logoutUser() {
+                // Clear user data from local storage
+                localStorage.removeItem('user');
+
+                // Redirect to login page
+                window.location.href = 'index.html';
+            }
         });
+
     </script>
 </body>
 
