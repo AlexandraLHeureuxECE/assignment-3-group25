@@ -71,3 +71,29 @@ body {
     background-color: rgb(141, 174, 166);
 }
 
+/* Assuming the rest of the style.css remains the same, add these for the dashboard */
+
+.dashboard-container {
+    background: url('bg.jpg') no-repeat center center fixed; 
+    background-size: cover;
+    color: #f5f5f5; /* Adjust the color to improve readability on your background */
+}
+
+nav ul {
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background for navbar */
+}
+
+nav ul li a {
+    color: #fff; /* White text color for links */
+}
+
+section {
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for sections */
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h2 {
+    color: #004d40; /* A color that fits the theme */
+}
