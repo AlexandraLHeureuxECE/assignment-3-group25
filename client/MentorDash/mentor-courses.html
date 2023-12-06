@@ -3,10 +3,12 @@
 
 
 <head>
+        
     <meta charset="UTF-8">
+        
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mentor Courses - LMS</title>
-    <style>
+        <title>Mentor Courses - LMS</title>
+        <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -161,99 +163,44 @@
 
 
 <body>
-    <div class="form-container">
-        <h2>Add/Remove Student</h2>
-        <form id="addStudentForm">
-            <div class="input-group">
-                <input type="text" id="addStudentID" placeholder="Student ID" required>
-                <select id="courseSelect"></select> <!-- Dropdown for course selection -->
-                <button type="submit">Add Student</button>
-            </div>
-        </form>
-        <form id="removeStudentForm">
-            <div class="input-group">
-                <input type="text" id="removeStudentID" placeholder="Student ID" required>
-                <select id="removeCourseSelect"></select> <!-- Dropdown for course selection -->
-                <button type="submit">Remove Student</button>
-            </div>
-        </form>
-    </div>
+        <div class="form-container">
+                <h2>Add/Remove Student</h2>
+                <form id="addStudentForm">
+                        <div class="input-group">
+                                <input type="text" id="addStudentID" placeholder="Student ID" required>
+                                <select id="courseSelect"></select> <!-- Dropdown for course selection -->
+                                <button type="submit">Add Student</button>
+                            </div>
+                    </form>
+                <form id="removeStudentForm">
+                        <div class="input-group">
+                                <input type="text" id="removeStudentID" placeholder="Student ID" required>
+                                <select id="removeCourseSelect"></select> <!-- Dropdown for course selection -->
+                                <button type="submit">Remove Student</button>
+                            </div>
+                    </form>
+            </div>
 
 
-    <div class="courses-container" id="coursesContainer">
-        <!-- Courses will be loaded here by JavaScript -->
-    </div>
+        <div class="courses-container" id="coursesContainer">
+                <!-- Courses will be loaded here by JavaScript -->
+            </div>
 
 
+        
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Assuming mentorId is retrieved from somewhere like localStorage
             const mentorId = JSON.parse(localStorage.getItem('user')).id;
 
-
-
-
-            // This should match the hostname and port of your Express server.
+            // Fetching courses taught by the logged-in mentor
             fetch(`http://localhost:3000/get-mentor-courses?mentorId=${mentorId}`)
                 .then(response => response.json())
                 .then(courses => {
-                    const container = document.getElementById('coursesContainer');
-                    container.innerHTML = ''; // Clear any existing content
-                    courses.forEach(course => {
-                        const courseElement = document.createElement('div');
-                        courseElement.className = 'course';
-                        courseElement.innerHTML = `
-                           <div class="course-title">${course.courseName}</div>
-                           <div class="student-list">
-                               ${course.students.map(student => `
-                                   <div class="student">
-                                       ${student.fName} ${student.lName}
-                                       <button class="remove-student" onclick="removeStudent(${student.studentID}, ${course.courseID})">Remove</button>
-                                   </div>
-                               `).join('')}
-                           </div>
-                       `;
-                        container.appendChild(courseElement);
-                    });
+                    updateCourseDropdowns(courses);
+                    updateCourseDisplay(courses);
                 })
-                .catch(error => {
-                    console.error('Error fetching mentor courses:', error);
-                });
-
-            fetch('http://localhost:3000/courses') // Fetch courses from your server
-                .then(response => response.json())
-                .then(courses => {
-                    const select = document.getElementById('courseSelect');
-                    courses.forEach(course => {
-                        const option = document.createElement('option');
-                        option.value = course.courseID + '-' + course.semester;
-                        option.textContent = course.courseName + ' - ' + course.semester;
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching courses:', error));
-
-            fetch('http://localhost:3000/courses') // Fetch courses from your server
-                .then(response => response.json())
-                .then(courses => {
-                    const removeSelect = document.getElementById('removeCourseSelect');
-                    courses.forEach(course => {
-                        const option = document.createElement('option');
-                        option.value = course.courseID + '-' + course.semester;
-                        option.textContent = course.courseName + ' - ' + course.semester;
-                        removeSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching courses:', error));
-
-            document.getElementById('removeStudentForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                const selectedValue = document.getElementById('removeCourseSelect').value;
-                const parts = selectedValue.split('-');
-                const courseId = parts[0];
-                const studentId = document.getElementById('removeStudentID').value;
-                addOrRemoveStudent('remove', studentId, courseId);
-            });
-
+                .catch(error => console.error('Error fetching mentor courses:', error));
 
             document.getElementById('addStudentForm').addEventListener('submit', function (e) {
                 e.preventDefault();
@@ -265,26 +212,55 @@
                 addOrRemoveStudent('add', studentId, courseId, semester);
             });
 
-
-
-
             document.getElementById('removeStudentForm').addEventListener('submit', function (e) {
                 e.preventDefault();
-                var studentId = document.getElementById('removeStudentID').value;
-                var courseId = document.getElementById('removeCourseID').value;
+                const selectedValue = document.getElementById('removeCourseSelect').value;
+                const parts = selectedValue.split('-');
+                const courseId = parts[0];
+                const studentId = document.getElementById('removeStudentID').value;
                 addOrRemoveStudent('remove', studentId, courseId);
             });
         });
 
+        function updateCourseDropdowns(courses) {
+            const courseSelect = document.getElementById('courseSelect');
+            const removeCourseSelect = document.getElementById('removeCourseSelect');
+            courses.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.courseID + '-' + course.semester;
+                option.textContent = course.courseName + ' - ' + course.semester;
+                courseSelect.appendChild(option);
+                removeCourseSelect.appendChild(option.cloneNode(true)); // Clone for the remove dropdown
+            });
+        }
 
-
+        function updateCourseDisplay(courses) {
+            const container = document.getElementById('coursesContainer');
+            container.innerHTML = '';
+            courses.forEach(course => {
+                const courseElement = document.createElement('div');
+                courseElement.className = 'course';
+                courseElement.innerHTML = `
+                        <div class="course-title">${course.courseName}</div>
+                        <div class="student-list">
+                            ${course.students.map(student => `
+                                <div class="student">
+                                    ${student.studentID} - ${student.fName} ${student.lName}
+                                    <button class="remove-student" onclick="removeStudent(${student.studentID}, '${course.courseID}')">Remove</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                container.appendChild(courseElement);
+            });
+        }
 
         function addOrRemoveStudent(action, studentId, courseId, semester) {
             const url = `http://localhost:3000/${action}-student`;
             const formData = new URLSearchParams();
             formData.append('studentId', studentId);
             formData.append('courseId', courseId);
-            formData.append('semester', semester);
+            if (semester) formData.append('semester', semester);
 
             fetch(url, {
                 method: 'POST',
@@ -303,9 +279,6 @@
                 })
                 .catch(error => alert('Error: ' + error.message));
         }
-
-
-
 
         function removeStudent(studentId, courseId) {
             addOrRemoveStudent('remove', studentId, courseId);

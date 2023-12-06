@@ -92,8 +92,19 @@ section {
     margin: 20px;
     padding: 20px;
     border-radius: 10px;
+    
 }
 
 h2 {
-    color: #004d40; /* A color that fits the theme */
+
+    color: #333;
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center; /* Center the text horizontally */
 }
+
+
+
+

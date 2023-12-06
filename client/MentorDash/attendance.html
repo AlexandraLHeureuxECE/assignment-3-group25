@@ -29,23 +29,36 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             min-height: 100vh; /* Minimum height to fill the viewport */
         }
-        h1, h2 {
+        h1 {
             text-align: center;
-            color: #1c94c3d7; /* Sky blue */
+            color: #808080; /* Light grey color for "Attendance Management System" */
+        }
+        h2 {
+            text-align: center;
+            color: #808080; /* Light grey color for "Students Attended on:" */
         }
         label {
             display: block;
-            margin-bottom: 20px; /* Increase the margin between labels and select elements */
+            margin-bottom: 10px; /* Standard margin for labels */
             color: #333;
         }
         select, input[type="date"], button {
             display: block;
             width: 100%; /* Make sure the dropdowns are the same length */
             padding: 8px;
-            margin-bottom: 10px; /* Increase the margin between dropdowns */
+            margin-bottom: 5px; /* Reduced space for all select elements and input */
             border-radius: 4px;
             border: 1px solid #ddd;
             background: rgba(255, 255, 255, 0.8);
+            box-sizing: border-box; /* Include padding and borders in the width calculation */
+        }
+        /* Increase the margin below the select element for "Select a Course" */
+        select:first-of-type {
+            margin-bottom: 50px; /* More space after the "Select a Course" dropdown */
+        }
+        /* Increase the margin below the date input */
+        input[type="date"]:last-of-type {
+            margin-bottom: 40px; /* More space above the "Submit Attendance" button */
         }
         button {
             background-color: hsl(197, 52%, 55%); /* Sky blue */
@@ -53,6 +66,7 @@
             border: none;
             cursor: pointer;
             transition: background-color 0.3s;
+            margin-bottom: 60px; /* More space below the "Submit Attendance" button */
         }
         button:hover {
             background-color: #1581a5d1; /* Darker shade of sky blue */
@@ -77,7 +91,8 @@
             padding: 0;
         }
     </style>
-       
+    
+    
 </head>
 
 <body>
