@@ -1,293 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="../style.css">
-    <title>Attendance Management System</title>
-    <style>
-
-        .container {
-            width: 80%;
-            margin: auto;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            min-height: 100vh; /* Minimum height to fill the viewport */
-        }
-        h1 {
-            text-align: center;
-            color: #808080; /* Light grey color for "Attendance Management System" */
-        }
-        h2 {
-            text-align: center;
-            color: #808080; /* Light grey color for "Students Attended on:" */
-        }
-        label {
-            display: block;
-            margin-bottom: 10px; /* Standard margin for labels */
-            color: #333;
-        }
-        select, input[type="date"], button {
-            display: block;
-            width: 100%; /* Make sure the dropdowns are the same length */
-            padding: 8px;
-            margin-bottom: 5px; /* Reduced space for all select elements and input */
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            background: rgba(255, 255, 255, 0.8);
-            box-sizing: border-box; /* Include padding and borders in the width calculation */
-        }
-        /* Increase the margin below the select element for "Select a Course" */
-        select:first-of-type {
-            margin-bottom: 50px; /* More space after the "Select a Course" dropdown */
-        }
-        /* Increase the margin below the date input */
-        input[type="date"]:last-of-type {
-            margin-bottom: 40px; /* More space above the "Submit Attendance" button */
-        }
-        button {
-            background-color: hsl(197, 52%, 55%); /* Sky blue */
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-bottom: 60px; /* More space below the "Submit Attendance" button */
-        }
-        button:hover {
-            background-color: #1581a5d1; /* Darker shade of sky blue */
-        }
-        .student-checkbox {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .student-checkbox label {
-            flex-grow: 1;
-        }
-        .student-checkbox input[type="checkbox"] {
-            width: 20px;
-            margin-right: 10px;
-        }
-        #attendanceListContainer {
-            margin-top: 20px;
-        }
-        #attendanceListContainer ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .dashboard-link {
-            color: aliceblue;
-            text-decoration: none; /* Remove underline */
-        }
-
-        .dashboard-link:hover {
-            color: aliceblue;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-image: url('/client/bg.jpg');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-position: center center;
-        }
-
-        header {
-            background-color: rgba(110, 121, 124, 0.856);
-            color: aliceblue;
-            outline: 2px solid #f7f7f7;
-            padding: 20px;
-        }
-        #dashboardTitle {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-left: 20px; /* Adjust the left margin to position it to the side */
-        }
-
-
-        .dashboard-container {
-            background: url('/client/bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-            color: #f5f5f5;
-            padding: 20px;
-        }
-
-        .title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-            border-bottom: 2px solid #ddd;
-            /* Add border */
-            padding-bottom: 5px;
-            /* Add padding */
-        }
-        .title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 5px;
-        }
-
-        #attendanceTitle {
-            text-align: center;
-            color: #808080;
-        }
-
-    </style>
-    
-    
+   <meta charset="UTF-8">
+   <title>Attendance Management System</title>
+   <style>
+       html, body {
+           height: 100%;
+           margin: 0;
+           padding: 0;
+           background-image: url('../bg.jpg'); /* Replace with your image URL */
+           background-size: cover;
+           background-position: center;
+           background-repeat: no-repeat;
+           background-attachment: fixed; /* Background image will not scroll with the page */
+       }
+       body {
+           font-family: Arial, sans-serif;
+           color: #333;
+           overflow-x: hidden; /* Prevent horizontal scrollbar */
+       }
+       .container {
+           width: 80%;
+           margin: auto;
+           padding: 20px;
+           background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+           border-radius: 8px;
+           box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+           min-height: 100vh; /* Minimum height to fill the viewport */
+       }
+       h1 {
+           text-align: center;
+           color: #808080; /* Light grey color for "Attendance Management System" */
+       }
+       h2 {
+           text-align: center;
+           color: #808080; /* Light grey color for "Students Attended on:" */
+       }
+       label {
+           display: block;
+           margin-bottom: 10px; /* Standard margin for labels */
+           color: #333;
+       }
+       select, input[type="date"], button {
+           display: block;
+           width: 100%; /* Make sure the dropdowns are the same length */
+           padding: 8px;
+           margin-bottom: 5px; /* Reduced space for all select elements and input */
+           border-radius: 4px;
+           border: 1px solid #ddd;
+           background: rgba(255, 255, 255, 0.8);
+           box-sizing: border-box; /* Include padding and borders in the width calculation */
+       }
+       /* Increase the margin below the select element for "Select a Course" */
+       select:first-of-type {
+           margin-bottom: 50px; /* More space after the "Select a Course" dropdown */
+       }
+       /* Increase the margin below the date input */
+       input[type="date"]:last-of-type {
+           margin-bottom: 40px; /* More space above the "Submit Attendance" button */
+       }
+       button {
+           background-color: hsl(197, 52%, 55%); /* Sky blue */
+           color: white;
+           border: none;
+           cursor: pointer;
+           transition: background-color 0.3s;
+           margin-bottom: 60px; /* More space below the "Submit Attendance" button */
+       }
+       button:hover {
+           background-color: #1581a5d1; /* Darker shade of sky blue */
+       }
+       .student-checkbox {
+           display: flex;
+           align-items: center;
+           margin-bottom: 15px;
+       }
+       .student-checkbox label {
+           flex-grow: 1;
+       }
+       .student-checkbox input[type="checkbox"] {
+           width: 20px;
+           margin-right: 10px;
+       }
+       #attendanceListContainer {
+           margin-top: 20px;
+       }
+       #attendanceListContainer ul {
+           list-style-type: none;
+           padding: 0;
+       }
+   </style>
+  
+  
 </head>
 
+
 <body>
-    <header>
-        <h1 id="dashboardTitle"></h1>
-        <nav class="dashboard-menu">
-            <ul>
-                <li><a href="course-content.html" class="dashboard-link">Course Content</a></li>
-                <li class="separator">|</li>
-                <li><a href="post-announcements.html" class="dashboard-link">Post Announcements</a></li>
-                <li class="separator">|</li>
-                <li><a href="attendance.html" class="dashboard-link">Attendance</a></li>
-                <li class="separator">|</li>
-                <li><a href="mentor-courses.html" class="dashboard-link">Courses</a></li>
-                <li class="separator">|</li>
-                <li><a href="progress-reports.html" class="dashboard-link">Progress Reports</a></li>
-                <li class="separator">|</li>
-                <li><a href="javascript:void(0);" id="logoutLink" class="dashboard-link">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
-    <div class="container">
-        <h1>Attendance Management System</h1>
-        <form id="attendanceForm">
-            <label for="courseSelect">Select a Course:</label>
-            <select id="courseSelect"></select>
+   <div class="container">
+       <h1>Attendance Management System</h1>
+       <form id="attendanceForm">
+           <label for="courseSelect">Select a Course:</label>
+           <select id="courseSelect"></select>
 
 
-            <label for="classDate">Class Date:</label>
-            <input type="date" id="classDate" required>
 
 
-            <div id="studentsContainer"></div>
+           <label for="classDate">Class Date:</label>
+           <input type="date" id="classDate" required>
 
 
-            <button type="submit">Submit Attendance</button>
-        </form>
 
 
-        <div id="attendanceListContainer">
-            <h2>Students Attended on <span id="selectedDateDisplay"></span>:</h2>
-            <ul id="attendanceList"></ul>
-        </div>
-    </div>
+           <div id="studentsContainer"></div>
 
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var user = JSON.parse(localStorage.getItem('user'));
-            if (user) {
-                document.getElementById('dashboardTitle').innerHTML = `<a href="../mentorDash.html" class="dashboard-link no-underline">${user.fName} ${user.lName}'s DASHBOARD</a>`;
-            }
-            document.getElementById('logoutLink').addEventListener('click', logoutUser);
-            const mentorId = JSON.parse(localStorage.getItem('user')).id;
-            const courseSelect = document.getElementById('courseSelect');
-            const studentsContainer = document.getElementById('studentsContainer');
 
 
-            fetch(`http://localhost:3000/get-mentor-courses-attendance?mentorId=${mentorId}`)
-                .then(response => response.json())
-                .then(courses => {
-                    courseSelect.innerHTML = '<option value="">Select a Course</option>';
-                    courses.forEach(course => {
-                        const option = document.createElement('option');
-                        option.value = course.courseID;
-                        option.textContent = course.courseName;
-                        courseSelect.appendChild(option);
-                    });
+           <button type="submit">Submit Attendance</button>
+       </form>
 
 
-                    courseSelect.addEventListener('change', function () {
-                        const selectedCourse = this.value;
-                        const relevantStudents = courses.find(course => course.courseID === selectedCourse)?.students || [];
-                        studentsContainer.innerHTML = '';
-                        relevantStudents.forEach(student => {
-                            let div = document.createElement('div');
-                            div.className = 'student-checkbox';
-                            div.innerHTML = `
-                                <input type="checkbox" id="student-${student.studentID}" name="students" value="${student.studentID}">
-                                <label for="student-${student.studentID}">${student.fName} ${student.lName}</label>
-                            `;
-                            studentsContainer.appendChild(div);
-                        });
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching mentor courses:', error);
-                });
 
 
-            document.getElementById('attendanceForm').addEventListener('submit', function (event) {
-                event.preventDefault();
-                const courseID = courseSelect.value;
-                const classDate = document.getElementById('classDate').value;
-                const selectedStudents = Array.from(this.querySelectorAll('input[name="students"]:checked'), checkbox => checkbox.value);
+       <div id="attendanceListContainer">
+           <h2>Students Attended on <span id="selectedDateDisplay"></span>:</h2>
+           <ul id="attendanceList"></ul>
+       </div>
+   </div>
 
 
-                fetch('http://localhost:3000/mark-attendance', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ courseID, classDate, selectedStudents }),
-                })
-                    .then(response => response.json()) // Parse the JSON response
-                    .then(data => {
-                        if (data.recordsInserted && data.recordsInserted > 0) {
-                            alert(`${data.message} Total records inserted: ${data.recordsInserted}`);
-                            displayAttendance(courseID, classDate); // Display attendance list
-                        } else {
-                            alert('No attendance records were inserted.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error marking attendance:', error);
-                        alert('Failed to mark attendance. Please try again.');
-                    });
 
 
-            });
-        });
+   <script>
+       document.addEventListener('DOMContentLoaded', function () {
+           const mentorId = JSON.parse(localStorage.getItem('user')).id;
+           const courseSelect = document.getElementById('courseSelect');
+           const studentsContainer = document.getElementById('studentsContainer');
 
 
-        function displayAttendance(courseID, classDate) {
-            fetch(`http://localhost:3000/get-attendance?courseID=${courseID}&classDate=${classDate}`)
-                .then(response => response.json())
-                .then(data => {
-                    const attendanceList = document.getElementById('attendanceList');
-                    const selectedDateDisplay = document.getElementById('selectedDateDisplay');
-                    selectedDateDisplay.textContent = classDate; // Display selected date
-                    attendanceList.innerHTML = ''; // Clear previous list
 
 
-                    data.forEach(student => {
-                        const li = document.createElement('li');
-                        li.textContent = `${student.fName} ${student.lName}`;
-                        attendanceList.appendChild(li);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching attendance data:', error);
-                });
-        }
-    </script>
+           fetch(`http://localhost:3000/get-mentor-courses-attendance?mentorId=${mentorId}`)
+               .then(response => response.json())
+               .then(courses => {
+                   courseSelect.innerHTML = '<option value="">Select a Course</option>';
+                   courses.forEach(course => {
+                       const option = document.createElement('option');
+                       option.value = course.courseID;
+                       option.textContent = course.courseName;
+                       courseSelect.appendChild(option);
+                   });
+
+
+
+
+                   courseSelect.addEventListener('change', function () {
+                       const selectedCourse = this.value;
+                       const relevantStudents = courses.find(course => course.courseID === selectedCourse)?.students || [];
+                       studentsContainer.innerHTML = '';
+                       relevantStudents.forEach(student => {
+                           let div = document.createElement('div');
+                           div.className = 'student-checkbox';
+                           div.innerHTML = `
+                               <input type="checkbox" id="student-${student.studentID}" name="students" value="${student.studentID}">
+                               <label for="student-${student.studentID}">${student.fName} ${student.lName}</label>
+                           `;
+                           studentsContainer.appendChild(div);
+                       });
+                   });
+               })
+               .catch(error => {
+                   console.error('Error fetching mentor courses:', error);
+               });
+
+
+
+
+           document.getElementById('attendanceForm').addEventListener('submit', function (event) {
+               event.preventDefault();
+               const courseID = courseSelect.value;
+               const classDate = document.getElementById('classDate').value;
+               const selectedStudents = Array.from(this.querySelectorAll('input[name="students"]:checked'), checkbox => checkbox.value);
+
+
+
+
+               fetch('http://localhost:3000/mark-attendance', {
+                   method: 'POST',
+                   headers: {
+                       'Content-Type': 'application/json',
+                   },
+                   body: JSON.stringify({ courseID, classDate, selectedStudents }),
+               })
+                   .then(response => response.json()) // Parse the JSON response
+                   .then(data => {
+                       if (data.recordsInserted && data.recordsInserted > 0) {
+                           alert(`${data.message} Total records inserted: ${data.recordsInserted}`);
+                           displayAttendance(courseID, classDate); // Display attendance list
+                       } else {
+                           alert('No attendance records were inserted.');
+                       }
+                   })
+                   .catch(error => {
+                       console.error('Error marking attendance:', error);
+                       alert('Failed to mark attendance. Please try again.');
+                   });
+
+
+
+
+           });
+       });
+
+
+
+
+       function displayAttendance(courseID, classDate) {
+           fetch(`http://localhost:3000/get-attendance?courseID=${courseID}&classDate=${classDate}`)
+               .then(response => response.json())
+               .then(data => {
+                   const attendanceList = document.getElementById('attendanceList');
+                   const selectedDateDisplay = document.getElementById('selectedDateDisplay');
+                   selectedDateDisplay.textContent = classDate; // Display selected date
+                   attendanceList.innerHTML = ''; // Clear previous list
+
+
+
+
+                   data.forEach(student => {
+                       const li = document.createElement('li');
+                       li.textContent = `${student.fName} ${student.lName}`;
+                       attendanceList.appendChild(li);
+                   });
+               })
+               .catch(error => {
+                   console.error('Error fetching attendance data:', error);
+               });
+       }
+   </script>
 </body>
+
 
 </html>
