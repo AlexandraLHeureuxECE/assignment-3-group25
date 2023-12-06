@@ -84,10 +84,6 @@ app.post('/login', (req, res) => {
 // Route to get courses taught by a mentor and the students enrolled in those courses
 app.get('/get-mentor-courses', (req, res) => {
     const mentorId = req.query.mentorId;
- 
- 
- 
- 
     const query = `
         SELECT c.courseID, c.courseName, s.studentID, s.fName, s.lName
         FROM Course c
@@ -95,10 +91,6 @@ app.get('/get-mentor-courses', (req, res) => {
         JOIN Student s ON e.studentID = s.studentID
         WHERE c.courseInstructor = ?
     `;
- 
- 
- 
- 
     db.query(query, [mentorId], (err, results) => {
         if (err) {
             res.status(500).send('Error in database operation');
@@ -532,19 +524,15 @@ app.get('/get-all-courses', (req, res) => {
  });
 
  app.post('/enroll-course', (req, res) => {
-    // Assuming studentId is retrieved from session or authentication context
-    const studentId = req.session.userId; // or however you retrieve the authenticated user's ID
-    const { courseId, semester } = req.body;
- 
- 
-    // Validate that courseId and semester are provided
-    if (!courseId || !semester) {
-        return res.status(400).send('Course ID and semester are required');
+    const { studentId, courseId, semester } = req.body; // Now taking studentId from the body
+
+    // Validate that courseId, studentId and semester are provided
+    if (!studentId || !courseId || !semester) {
+        return res.status(400).send('Student ID, Course ID and semester are required');
     }
- 
- 
+
     const query = 'INSERT INTO Enrollments (courseID, studentID, semester) VALUES (?, ?, ?)';
-   
+
     db.query(query, [courseId, studentId, semester], (err, result) => {
         if (err) {
             console.error('Database error:', err);
@@ -557,55 +545,7 @@ app.get('/get-all-courses', (req, res) => {
             res.status(200).send('Enrollment successful');
         }
     });
- });
-
- 
- // // Enroll student in a course
-// app.post('/enroll-student', (req, res) => {
-//     console.log(req.body);
-//     const { studentId, courseId, semester } = req.body;
-
-
-//     // Validate that the courseID and semester exist in the Course table
-//     const validationQuery = 'SELECT * FROM Course WHERE courseID = ? AND semester = ?';
-//     console.log(`Validating course - CourseID: ${courseId}, Semester: ${semester}`);
-
-
-//     db.query(validationQuery, [courseId, semester], (validationErr, validationResults) => {
-//         if (validationErr) {
-//             console.error('Validation error:', validationErr);
-//             res.status(500).json({ error: 'Error validating course and semester: ' + validationErr.message });
-//             return;
-//         }
-
-
-//         if (validationResults.length === 0) {
-//             console.log('No course found with the specified ID and semester');
-//             res.status(400).json({ error: 'Course with the specified ID and semester does not exist' });
-//             return;
-//         }
-
-
-//         // Proceed with the enrollment
-//         const insertQuery = 'INSERT INTO Enrollments (studentID, courseID, semester) VALUES (?, ?, ?)';
-//         db.query(insertQuery, [studentId, courseId, semester], (insertErr, insertResult) => {
-//             if (insertErr) {
-//                 if (insertErr.code === 'ER_DUP_ENTRY') {
-//                     res.status(409).json({ error: 'Student is already enrolled in this course for the specified semester' });
-//                 } else {
-//                     res.status(500).json({ error: 'Error enrolling in course: ' + insertErr.message });
-//                 }
-//                 return;
-//             }
-
-
-//             if (insertResult && insertResult.affectedRows > 0) {
-//                 res.json({ message: 'Enrollment successful!' });
-//             } else {
-//                 res.status(400).json({ error: 'Enrollment failed. No changes made to the database.' });
-//             }
-//         });
-//     });
+});
 
 // Start server
 const PORT = process.env.PORT || 3000;
