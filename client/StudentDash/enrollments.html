@@ -89,53 +89,52 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            let coursesData = [];
+    let coursesData = [];
 
-            // Attempt to retrieve the user ID from localStorage
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (!user || !user.id) {
-                console.error('User ID is not available.');
-                return; // Exit the function if no user ID is found
-            }
-            console.log("Student ID: ", user.id);
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.id) {
+        console.error('User ID is not available.');
+        return;
+    }
+    console.log("Student ID: ", user.id);
 
-            // Fetch courses
-            fetch('http://localhost:3000/get-all-courses')
-                .then(response => response.json())
-                .then(courses => {
-                    console.log("Courses data: ", courses);
-                    coursesData = courses;
-                    displayCourses(courses);
-                })
-                .catch(error => {
-                    console.error("Error fetching courses: ", error);
-                });
+    fetch('http://localhost:3000/get-all-courses')
+        .then(response => response.json())
+        .then(courses => {
+            coursesData = courses.sort((a, b) => {
+                let nameA = `${a.fName} ${a.lName}`.toLowerCase();
+                let nameB = `${b.fName} ${b.lName}`.toLowerCase();
+                return nameA.localeCompare(nameB); // Sort by mentor name
+            });
+            displayCourses(coursesData);
+        })
+        .catch(error => {
+            console.error("Error fetching courses: ", error);
+        });
 
-            // Display courses
-            function displayCourses(courses) {
-                const container = document.getElementById('coursesContainer');
-                container.innerHTML = '';
-                courses.forEach(course => {
-                    const courseElement = document.createElement('div');
-                    courseElement.className = 'course';
-                    courseElement.innerHTML = `
-                        <h3 class="course-title">${course.courseName}</h3>
-                        <p class="course-description">${course.courseDescription}</p>
-                        <p class="course-mentor">Mentor: ${course.fName} ${course.lName}</p>
-                        <p class="course-semester">Semester: ${course.semester}</p>
-                        <button onclick='enroll(${course.courseID}, "${course.semester}")'>Enroll</button>`;
-                    container.appendChild(courseElement);
-                });
-            }
+    function displayCourses(courses) {
+        const container = document.getElementById('coursesContainer');
+        container.innerHTML = '';
+        courses.forEach(course => {
+            const courseElement = document.createElement('div');
+            courseElement.className = 'course';
+            courseElement.innerHTML = `
+                <h3 class="course-title">${course.courseName}</h3>
+                <p class="course-description">${course.courseDescription}</p>
+                <p class="course-mentor">Mentor: ${course.fName} ${course.lName}</p>
+                <p class="course-semester">Semester: ${course.semester}</p>
+                <button onclick='enroll(${course.courseID}, "${course.semester}")'>Enroll</button>`;
+            container.appendChild(courseElement);
+        });
+    }
 
-            // Filter courses
-            window.filterCourses = function () {
-                const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-                const filteredCourses = coursesData.filter(course =>
-                    course.courseName.toLowerCase().includes(searchTerm)
-                );
-                displayCourses(filteredCourses);
-            };
+    window.filterCourses = function () {
+        const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+        const filteredCourses = coursesData.filter(course =>
+            course.courseName.toLowerCase().includes(searchTerm)
+        );
+        displayCourses(filteredCourses);
+    };
 
             // Enroll function
             window.enroll = function (courseId, semester) {
