@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta viewport="width=device-width, initial-scale=1.0">
+    <title>Mentor Progress Report Entry</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Add Student Progress Report</h2>
+        <form id="progressReportForm">
+            <div class="form-group">
+                <label for="courseSelect">Course:</label>
+                <select id="courseSelect" required>
+                    <!-- Course options will be populated here -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="semesterSelect">Semester:</label>
+                <select id="semesterSelect" required>
+                    <!-- Semester options will be populated here -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="studentSelect">Student:</label>
+                <select id="studentSelect" required>
+                    <!-- Student options will be populated here -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="assessmentName">Assessment Name:</label>
+                <input type="text" id="assessmentName" required>
+            </div>
+            <div class="form-group">
+                <label for="assessmentGrade">Assessment Grade:</label>
+                <input type="text" id="assessmentGrade" required>
+            </div>
+            <div class="form-group">
+                <label for="assessmentWeight">Assessment Weight:</label>
+                <input type="text" id="assessmentWeight" required>
+            </div>
+            <div class="form-group">
+                <label for="comments">Comments:</label>
+                <textarea id="comments"></textarea>
+            </div>
+            <button type="submit">Submit Report</button>
+        </form>
+    </div>
+    <script>
+        // Declare allCourses in global scope
+        let allCourses = [];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.type !== 'Mentor') {
+                alert('You must be logged in as a mentor to access this page.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            fetch(`http://localhost:3000/get-mentor-courses-progressReports?mentorId=${user.id}`)
+                .then(response => response.json())
+                .then(courses => {
+                    allCourses = courses;
+                    populateCoursesDropdown(courses);
+                    if (courses.length > 0) {
+                        updateSemesterDropdown(courses[0].courseID);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+
+            document.getElementById('courseSelect').addEventListener('change', function () {
+                updateSemesterDropdown(this.value);
+            });
+
+            document.getElementById('semesterSelect').addEventListener('change', function () {
+                const courseID = document.getElementById('courseSelect').value;
+                updateStudentDropdown(courseID, this.value);
+            });
+
+            document.getElementById('progressReportForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                submitProgressReport();
+            });
+        });
+
+        function populateCoursesDropdown(courses) {
+            const courseSelect = document.getElementById('courseSelect');
+            courseSelect.innerHTML = '<option value="">Select Course</option>';
+            courses.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.courseID;
+                option.textContent = course.courseName;
+                courseSelect.appendChild(option);
+            });
+        }
+
+        function updateSemesterDropdown(courseID) {
+            const semesterSelect = document.getElementById('semesterSelect');
+            semesterSelect.innerHTML = '';
+            allCourses.filter(course => course.courseID == courseID).forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.semester;
+                option.textContent = course.semester;
+                semesterSelect.appendChild(option);
+            });
+            semesterSelect.dispatchEvent(new Event('change'));
+        }
+
+        function updateStudentDropdown(courseID, semester) {
+            const studentSelect = document.getElementById('studentSelect');
+            studentSelect.innerHTML = '';
+            const selectedCourse = allCourses.find(course => course.courseID == courseID && course.semester == semester);
+            if (selectedCourse && selectedCourse.students.length > 0) {
+                selectedCourse.students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student.studentID;
+                    option.textContent = `${student.fName} ${student.lName}`;
+                    studentSelect.appendChild(option);
+                });
+            } else {
+                const noOption = document.createElement('option');
+                noOption.textContent = "No students enrolled";
+                studentSelect.appendChild(noOption);
+            }
+        }
+
+        function submitProgressReport() {
+            const courseID = document.getElementById('courseSelect').value;
+            const semester = document.getElementById('semesterSelect').value;
+            const studentID = document.getElementById('studentSelect').value;
+            const assessmentName = document.getElementById('assessmentName').value;
+            const assessmentGrade = document.getElementById('assessmentGrade').value;
+            const assessmentWeight = document.getElementById('assessmentWeight').value;
+            const comments = document.getElementById('comments').value;
+
+            fetch('http://localhost:3000/add-progress-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `courseID=${courseID}&studentID=${studentID}&semester=${semester}&assessmentName=${assessmentName}&assessmentGrade=${assessmentGrade}&assessmentWeight=${assessmentWeight}&comments=${comments}`
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Server responded with a status of ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert('Progress report submitted successfully');
+                })
+                .catch(error => {
+                    console.error('Error submitting progress report:', error);
+                    alert('Failed to submit progress report: ' + error.message);
+                });
+        }
+    </script>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        label,
+        select,
+        input[type="date"],
+        button {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .student-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .student-checkbox input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        #attendanceListContainer {
+            margin-top: 20px;
+        }
+
+        #attendanceListContainer ul {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Attendance Management System</h1>
+        <form id="attendanceForm">
+            <label for="courseSelect">Select a Course:</label>
+            <select id="courseSelect"></select>
+
+
+            <label for="classDate">Class Date:</label>
+            <input type="date" id="classDate" required>
+
+
+            <div id="studentsContainer"></div>
+
+
+            <button type="submit">Submit Attendance</button>
+        </form>
+
+
+        <div id="attendanceListContainer">
+            <h2>Students Attended on <span id="selectedDateDisplay"></span>:</h2>
+            <ul id="attendanceList"></ul>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mentorId = JSON.parse(localStorage.getItem('user')).id;
+            const courseSelect = document.getElementById('courseSelect');
+            const studentsContainer = document.getElementById('studentsContainer');
+
+
+            fetch(`http://localhost:3000/get-mentor-courses?mentorId=${mentorId}`)
+                .then(response => response.json())
+                .then(courses => {
+                    courseSelect.innerHTML = '<option value="">Select a Course</option>';
+                    courses.forEach(course => {
+                        const option = document.createElement('option');
+                        option.value = course.courseID;
+                        option.textContent = course.courseName;
+                        courseSelect.appendChild(option);
+                    });
+
+
+                    courseSelect.addEventListener('change', function () {
+                        const selectedCourse = this.value;
+                        const relevantStudents = courses.find(course => course.courseID === selectedCourse)?.students || [];
+                        studentsContainer.innerHTML = '';
+                        relevantStudents.forEach(student => {
+                            let div = document.createElement('div');
+                            div.className = 'student-checkbox';
+                            div.innerHTML = `
+                                <input type="checkbox" id="student-${student.studentID}" name="students" value="${student.studentID}">
+                                <label for="student-${student.studentID}">${student.fName} ${student.lName}</label>
+                            `;
+                            studentsContainer.appendChild(div);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching mentor courses:', error);
+                });
+
+
+            document.getElementById('attendanceForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const courseID = courseSelect.value;
+                const classDate = document.getElementById('classDate').value;
+                const selectedStudents = Array.from(this.querySelectorAll('input[name="students"]:checked'), checkbox => checkbox.value);
+
+
+                fetch('http://localhost:3000/mark-attendance', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ courseID, classDate, selectedStudents }),
+                })
+                    .then(response => response.json()) // Parse the JSON response
+                    .then(data => {
+                        if (data.recordsInserted && data.recordsInserted > 0) {
+                            alert(`${data.message} Total records inserted: ${data.recordsInserted}`);
+                            displayAttendance(courseID, classDate); // Display attendance list
+                        } else {
+                            alert('No attendance records were inserted.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error marking attendance:', error);
+                        alert('Failed to mark attendance. Please try again.');
+                    });
+
+
+            });
+        });
+
+
+        function displayAttendance(courseID, classDate) {
+            fetch(`http://localhost:3000/get-attendance?courseID=${courseID}&classDate=${classDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    const attendanceList = document.getElementById('attendanceList');
+                    const selectedDateDisplay = document.getElementById('selectedDateDisplay');
+                    selectedDateDisplay.textContent = classDate; // Display selected date
+                    attendanceList.innerHTML = ''; // Clear previous list
+
+
+                    data.forEach(student => {
+                        const li = document.createElement('li');
+                        li.textContent = `${student.fName} ${student.lName}`;
+                        attendanceList.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching attendance data:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>

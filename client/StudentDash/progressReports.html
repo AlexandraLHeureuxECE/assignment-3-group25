@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <title>Progress Reports - Student Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('/client/bg.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
+        }
+
+
+        header {
+            background-color: rgba(110, 121, 124, 0.856);
+            color: aliceblue;
+            outline: 2px solid #f7f7f7;
+            padding: 20px;
+        }
+
+
+        #dashboardTitle {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+
+        .dashboard-container {
+            background: url('/client/bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #f5f5f5;
+            padding: 20px;
+        }
+
+
+        .progress-reports-container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+
+        .progress-report {
+            width: 60%;
+            /* Adjust the width as needed */
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+
+        .report-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+
+        .report-info {
+            margin-top: 10px;
+            color: #333;
+        }
+
+
+        .final-grade,
+        .overall-average {
+            width: 60%;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .overall-assessment-average {
+            color: #333;
+            /* Set the text color to the same color as #333 */
+        }
+
+
+        .course-container {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+
+<body>
+    <header>
+        <h1 id="dashboardTitle"></h1>
+        <nav>
+            <ul>
+                <li><a href="courses.html">Courses</a></li>
+                <li class="separator">|</li>
+                <li><a href="enrollments.html">Enrollments</a></li>
+                <li class="separator">|</li>
+                <li><a href="progressReports.html">Progress Reports</a></li>
+                <li class="separator">|</li>
+                <li><a href="javascript:void(0);" id="logoutLink" class="dashboard-link">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main class="dashboard-container">
+        <h2>Your Progress Reports</h2>
+        <div id="progressAndGradesContainer">
+            <!-- Progress reports will be loaded here by JavaScript -->
+        </div>
+    </main>
+
+
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                document.getElementById('dashboardTitle').textContent = `${user.fName} ${user.lName}'s DASHBOARD`;
+            }
+            document.getElementById('logoutLink').addEventListener('click', logoutUser);
+
+
+
+
+            // Fetch and display progress reports, final grades, and overall average grades
+            Promise.all([
+                fetch(`http://localhost:3000/get-student-progress-reports?studentId=${user.id}`).then(response => response.json()),
+                fetch(`http://localhost:3000/get-final-grades?studentId=${user.id}`).then(response => response.json()),
+                fetch('http://localhost:3000/get-overall-course-averages').then(response => response.json()),
+                fetch('http://localhost:3000/get-overall-assessment-averages').then(response => response.json())
+            ])
+                .then(([progressReports, finalGrades, overallCourseAverages, overallAssessmentAverages]) => {
+                    const container = document.getElementById('progressAndGradesContainer');
+                    container.innerHTML = ''; // Clear any existing content
+
+
+                    // Group progress reports by course
+                    const groupedReports = groupBy(progressReports, 'courseID');
+
+
+                    // Iterate over each course's progress reports
+                    for (const courseId in groupedReports) {
+                        const courseReports = groupedReports[courseId];
+
+
+                        // Find the corresponding final grade using the course ID
+                        const finalGrade = finalGrades.find(grade => grade.courseID === parseInt(courseId));
+
+
+                        // Find the corresponding overall average grade using the course ID
+                        const overallCourseAverage = overallCourseAverages.find(average => average.courseID === parseInt(courseId));
+
+
+                        // Create a container for the course
+                        const courseContainer = document.createElement('div');
+                        courseContainer.className = 'course-container';
+
+
+                        // Iterate over each progress report in the course
+                        courseReports.forEach(report => {
+                            const reportElement = document.createElement('div');
+                            reportElement.className = 'progress-report';
+                            reportElement.innerHTML = `
+                                <div class="report-title">${report.courseName} - ${report.semester}</div>
+                                <div class="report-info">
+                                    <p>Assessment: ${report.assessmentName}</p>
+                                    <p>Grade: ${report.assessmentGrade}</p>
+                                    <p>Weight: ${report.assessmentWeight}</p>
+                                    <p>Comments: ${report.comments}</p>
+                                </div>
+                            `;
+
+
+                            // Display the overall assessment grade for the specific assessment
+                            const overallAssessmentAverage = overallAssessmentAverages.find(
+                                average => average.assessmentName === report.assessmentName
+                            );
+
+
+                            if (overallAssessmentAverage) {
+                                const overallAssessmentAverageElement = document.createElement('div');
+                                overallAssessmentAverageElement.className = 'overall-assessment-average';
+                                overallAssessmentAverageElement.innerHTML = `
+                                    <p>Overall Assessment Average: ${overallAssessmentAverage.OverallAssessmentAverage.toFixed(2)}</p>
+                                `;
+                                reportElement.appendChild(overallAssessmentAverageElement);
+                            }
+
+
+                            courseContainer.appendChild(reportElement);
+                        });
+
+
+                        // Display the final grade for the course
+                        if (finalGrade) {
+                            const finalGradeElement = document.createElement('div');
+                            finalGradeElement.className = 'final-grade';
+                            finalGradeElement.innerHTML = `
+                                <p>Final Grade: ${finalGrade.finalGrade.toFixed(2)}</p>
+                            `;
+                            courseContainer.appendChild(finalGradeElement);
+                        }
+
+
+                        // Display the overall average grade for the course
+                        if (overallCourseAverage) {
+                            const overallAverageElement = document.createElement('div');
+                            overallAverageElement.className = 'overall-average';
+                            overallAverageElement.innerHTML = `
+                                <p>Overall Average Grade: ${overallCourseAverage.OverallCourseAverage.toFixed(2)}</p>
+                            `;
+                            courseContainer.appendChild(overallAverageElement);
+                        }
+
+
+                        // Append the course container to the main container
+                        container.appendChild(courseContainer);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+
+
+
+
+
+
+            // Helper function to group an array of objects by a specified key
+            function groupBy(array, key) {
+                return array.reduce((result, obj) => {
+                    (result[obj[key]] = result[obj[key]] || []).push(obj);
+                    return result;
+                }, {});
+            }
+
+
+
+
+            function logoutUser() {
+                localStorage.removeItem('user');
+                window.location.href = '../index.html';
+            }
+
+
+        });
+    </script>
+
+
+</body>
+
+
+</html>

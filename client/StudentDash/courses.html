@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('/client/bg.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
+        }
+
+
+        header {
+            background-color: rgba(110, 121, 124, 0.856);
+            color: aliceblue;
+            outline: 2px solid #f7f7f7;
+            padding: 20px;
+        }
+
+
+        #dashboardTitle {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+
+        .dashboard-container {
+            background: url('/client/bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #f5f5f5;
+            padding: 20px;
+        }
+
+
+        .courses-container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+
+        .course {
+            width: 60%;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            border-bottom: 2px solid #ddd;
+            /* Add border */
+            padding-bottom: 5px;
+            /* Add padding */
+        }
+
+
+        .info {
+            margin-top: 10px;
+            color: #333;
+        }
+    </style>
+</head>
+
+
+<body>
+    <header>
+        <h1 id="dashboardTitle"></h1>
+        <nav>
+            <ul>
+                <li><a href="courses.html">Courses</a></li>
+                <li class="separator">|</li>
+                <li><a href="enrollments.html">Enrollments</a></li>
+                <li class="separator">|</li>
+                <li><a href="progressReports.html">Progress Reports</a></li>
+                <li class="separator">|</li>
+                <li><a href="javascript:void(0);" id="logoutLink" class="dashboard-link">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main class="dashboard-container">
+        <h2>Your Courses</h2>
+        <div id="coursesContainer">
+            <!-- Courses will be loaded here by JavaScript -->
+        </div>
+    </main>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fetch student data from localStorage
+            var user = JSON.parse(localStorage.getItem('user'));
+            var studentId = user.id;
+
+
+            // Set dashboard title to student's name
+            document.getElementById('dashboardTitle').textContent = `${user.fName} ${user.lName}'s DASHBOARD`;
+
+
+            // Fetch and display student courses
+            fetch(`http://localhost:3000/get-student-courses?studentId=${studentId}`)
+                .then(response => response.json())
+                .then(courses => {
+                    const container = document.getElementById('coursesContainer');
+                    container.innerHTML = ''; // Clear any existing content
+                    courses.forEach(course => {
+                        const courseElement = document.createElement('div');
+                        courseElement.className = 'course';
+                        courseElement.innerHTML = `
+                            <div class="title">${course.courseName}</div>
+                            <div class="info">
+                                <p>Semester: ${course.semester}</p>
+                                <p>Instructor: ${course.instructorFirstName} ${course.instructorLastName}</p>
+                            </div>
+                        `;
+                        container.appendChild(courseElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching student courses:', error);
+                });
+
+
+            // Add logout functionality
+            document.getElementById('logoutLink').addEventListener('click', logoutUser);
+
+
+            function logoutUser() {
+                // Clear user data from local storage
+                localStorage.removeItem('user');
+
+
+                // Redirect to login page
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+
+
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Enrollment - LMS</title>
+    <style>
+        .course-container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .course {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .course-title {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .course-description,
+        .course-mentor {
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .search-container {
+            width: 80%;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .search-box {
+            padding: 10px;
+            margin-bottom: 20px;
+            width: 300px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 style="text-align:center;">Offered Courses</h2>
+    <div class="search-container">
+        <input type="text" id="searchBox" class="search-box" onkeyup="filterCourses()"
+            placeholder="Search for courses...">
+    </div>
+    <div class="course-container" id="coursesContainer">
+        <!-- Courses will be listed here -->
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let coursesData = [];
+            let studentId;
+
+            // Try to get the student ID safely
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (user && user.id) {
+                    studentId = user.id;
+                } else {
+                    throw new Error('User ID is not available.');
+                }
+                console.log("Student ID: ", studentId);
+            } catch (e) {
+                console.error("Error parsing studentId from localStorage: ", e);
+                return; // Exit the function if no student ID is found
+            }
+
+            // Fetch courses
+            fetch('http://localhost:3000/get-all-courses')
+                .then(response => response.json())
+                .then(courses => {
+                    console.log("Courses data: ", courses);
+                    coursesData = courses;
+                    displayCourses(courses);
+                })
+                .catch(error => {
+                    console.error("Error fetching courses: ", error);
+                });
+
+            // Display courses
+            function displayCourses(courses) {
+                const container = document.getElementById('coursesContainer');
+                container.innerHTML = '';
+                courses.forEach(course => {
+                    const courseElement = document.createElement('div');
+                    courseElement.className = 'course';
+                    courseElement.innerHTML = `
+                        <h3 class="course-title">${course.courseName}</h3>
+                        <p class="course-description">${course.courseDescription}</p>
+                        <p class="course-mentor">Mentor: ${course.fName} ${course.lName}</p>
+                        <p class="course-semester">Semester: ${course.semester}</p>
+                        <button onclick='enroll(${JSON.stringify(course)})'>Enroll</button>`;
+                    container.appendChild(courseElement);
+                });
+            }
+
+            // Filter courses
+            window.filterCourses = function () {
+                const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+                const filteredCourses = coursesData.filter(course =>
+                    course.courseName.toLowerCase().includes(searchTerm)
+                );
+                displayCourses(filteredCourses);
+            };
+
+            // Enroll function
+            window.enroll = function (course) {
+                console.log("Enrolling in course: ", course);
+                const courseId = course.courseID; // Make sure this matches the property name in the course object
+                const semester = course.semester;
+
+                fetch('http://localhost:3000/enroll-course', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ studentId, courseId, semester })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to enroll');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Enrollment success data: ", data);
+                        alert(`Successfully enrolled in ${data.courseName}`);
+                    })
+                    .catch(error => {
+                        console.error('Error enrolling in course: ', error);
+                        alert('Error enrolling in course: ' + error.message);
+                    });
+            }
+        });
+    </script>
+</body>
+
+</html>
