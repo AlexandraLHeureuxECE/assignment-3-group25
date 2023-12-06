@@ -95,6 +95,7 @@ section {
 }
 
 h2 {
+    
     color: #333;
     background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
     padding: 10px;
@@ -102,5 +103,7 @@ h2 {
     margin-bottom: 15px;
     text-align: center; /* Center the text horizontally */
 }
+
+
 
 
