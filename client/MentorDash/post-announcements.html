@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Mentor Announcements</title>
+   <style>
+       body {
+           font-family: Arial, sans-serif;
+           margin: 0;
+           padding: 0;
+           background-image: url('/client/bg.jpg');
+           background-size: cover;
+           background-repeat: no-repeat;
+           background-attachment: fixed;
+           background-position: center center;
+       }
+
+
+       .announcement-container {
+           width: 80%;
+           margin: 20px auto;
+           padding: 20px;
+           background-color: rgba(255, 255, 255, 0.9);
+           box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+           border-radius: 10px;
+       }
+
+
+       .announcement {
+           background-color: rgba(255, 255, 255, 0.5);
+           border: 1px solid #ddd;
+           padding: 10px;
+           margin-bottom: 10px;
+       }
+
+
+       .announcement-title {
+   font-size: 24px; /* Larger font size for title */
+   font-weight: bold; /* Bold title */
+   color: #333;
+   margin-bottom: 5px;
+}
+
+
+.announcement-header {
+   font-size: 18px; /* Smaller font size for header */
+   color: #666;
+   margin-bottom: 10px;
+}
+
+
+       .announcement-date {
+           color: #666;
+       }
+
+
+       .announcement-body {
+           margin-top: 10px;
+           color: #333;
+       }
+
+
+       .editor-container {
+           width: 80%;
+           margin: 20px auto;
+           padding: 20px;
+           background-color: rgba(255, 255, 255, 0.9);
+           box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+           border-radius: 10px;
+       }
+
+
+       input[type="text"],
+       textarea {
+           width: 100%;
+           padding: 10px;
+           margin: 10px 0;
+           border-radius: 4px;
+           border: 1px solid #ddd;
+       }
+
+
+       button {
+           padding: 10px;
+           background-color: #5cb85c;
+           color: white;
+           border: none;
+           cursor: pointer;
+           border-radius: 4px;
+       }
+   </style>
+</head>
+
+
+<body>
+   <div class="editor-container">
+       <h2 id="formTitle">Create/Edit Announcement</h2>
+       <input type="hidden" id="editingId">
+       <input type="text" id="title" placeholder="Title">
+       <input type="text" id="header" placeholder="Header">
+       <textarea id="text" rows="4" placeholder="Announcement text"></textarea>
+       <button onclick="submitAnnouncement()">Post Announcement</button>
+       <button onclick="cancelEdit()" style="display: none;" id="cancelEditButton">Cancel Edit</button>
+   </div>
+
+
+   <div class="announcement-container" id="announcements">
+       <!-- Existing announcements will be added here dynamically -->
+   </div>
+
+
+   <script>
+       let currentEditingId = null;
+       let announcementsData = []; // This array will hold the announcement data
+
+
+       document.addEventListener('DOMContentLoaded', function () {
+           // Simulate fetching initial announcements (replace this with actual server fetch)
+           announcementsData = [
+               { id: 1, title: "Welcome", header: "Welcome to the New Semester!", text: "Hello and blessings to all, welcome to Foundations of Faith Course on our Divine Learning Management System! I'm Sister Mary Elizabeth, your guide and mentor in this spiritual journey. In this course, we'll explore the core principles of our faith, examining sacred texts and theological concepts. All course materials, including lectures, readings, and reflective exercises, are available on our platform. Please feel free to reach out to me for guidance or questions. Keep an eye on key dates for reflective assignments and engage actively in our virtual community discussions to enrich your spiritual understanding. Your insights and feedback are invaluable as we progress. Our first virtual gathering is on October 10th. I look forward to walking this path of faith and learning with each of you.", date: "2023-04-01" },
+               // ... add more initial announcements here ...
+           ];
+           displayAnnouncements();
+       });
+
+
+       function displayAnnouncements() {
+   const announcementsDiv = document.getElementById('announcements');
+   announcementsDiv.innerHTML = '';
+   announcementsData.forEach(announcement => {
+       const announcementElement = document.createElement('div');
+       announcementElement.className = 'announcement';
+       announcementElement.innerHTML = `
+           <h3 class="announcement-title">${announcement.title}</h3> <!-- Title as larger and bold -->
+           <h4 class="announcement-header">${announcement.header}</h4> <!-- Header smaller and underneath -->
+           <div class="announcement-date">${announcement.date}</div>
+           <div class="announcement-body">${announcement.text}</div>
+           <button onclick="editAnnouncement(${announcement.id})">Edit</button>
+           <button onclick="deleteAnnouncement(${announcement.id})">Delete</button>
+       `;
+       announcementsDiv.appendChild(announcementElement);
+   });
+}
+
+
+
+
+       function submitAnnouncement() {
+           const title = document.getElementById('title').value;
+           const header = document.getElementById('header').value;
+           const text = document.getElementById('text').value;
+           const editingId = document.getElementById('editingId').value;
+
+
+           if (editingId) {
+               // Update the existing announcement
+               const announcement = announcementsData.find(a => a.id == editingId);
+               announcement.title = title;
+               announcement.header = header;
+               announcement.text = text;
+           } else {
+               // Add a new announcement
+               const newAnnouncement = {
+                   id: Date.now(), // Temporary ID generation, replace with real ID from server
+                   title: title,
+                   header: header,
+                   text: text,
+                   date: new Date().toISOString().split('T')[0]
+               };
+               announcementsData.push(newAnnouncement);
+           }
+          
+           displayAnnouncements();
+           clearForm();
+       }
+
+
+       function editAnnouncement(id) {
+           const announcement = announcementsData.find(a => a.id == id);
+           document.getElementById('title').value = announcement.title;
+           document.getElementById('header').value = announcement.header;
+           document.getElementById('text').value = announcement.text;
+           document.getElementById('editingId').value = announcement.id;
+           document.getElementById('formTitle').textContent = 'Edit Announcement';
+           document.getElementById('cancelEditButton').style.display = 'block';
+           currentEditingId = id;
+       }
+
+
+       function deleteAnnouncement(id) {
+           announcementsData = announcementsData.filter(a => a.id !== id);
+           displayAnnouncements();
+       }
+
+
+       function clearForm() {
+           document.getElementById('title').value = '';
+           document.getElementById('header').value = '';
+           document.getElementById('text').value = '';
+           document.getElementById('editingId').value = '';
+           document.getElementById('formTitle').textContent = 'Create/Edit Announcement';
+           document.getElementById('cancelEditButton').style.display = 'none';
+           currentEditingId = null;
+       }
+
+
+       function cancelEdit() {
+           clearForm();
+       }
+   </script>
+</body>
+</html>
+
+
+
