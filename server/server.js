@@ -21,7 +21,7 @@ app.use(express.json());
 const db = mysql.createConnection({
    host: 'localhost',
    user: 'root',
-   password: 'Amjad1947-',
+   password: '',
    database: 'LMS_1'
 });
 
@@ -189,6 +189,46 @@ app.post('/add-progress-report', (req, res) => {
     });
 });
 
+
+app.get('/get-mentor-courses-attendance', (req, res) => {
+    const mentorId = req.query.mentorId;
+
+
+    const query = `
+        SELECT c.courseID, c.courseName, s.studentID, s.fName, s.lName
+        FROM Course c
+        JOIN Enrollments e ON c.courseID = e.courseID
+        JOIN Student s ON e.studentID = s.studentID
+        WHERE c.courseInstructor = ?
+    `;
+
+
+    db.query(query, [mentorId], (err, results) => {
+        if (err) {
+            res.status(500).send('Error in database operation');
+            return;
+        }
+
+
+        const courses = {};
+        results.forEach(row => {
+            if (!courses[row.courseID]) {
+                courses[row.courseID] = { courseName: row.courseName, students: [] };
+            }
+            courses[row.courseID].students.push({ studentID: row.studentID, fName: row.fName, lName: row.lName });
+        });
+
+
+        const coursesArray = Object.keys(courses).map(courseID => ({
+            courseID: courseID,
+            courseName: courses[courseID].courseName,
+            students: courses[courseID].students
+        }));
+
+
+        res.json(coursesArray);
+    });
+});
 
 app.post('/mark-attendance', (req, res) => {
     const { courseID, classDate, selectedStudents } = req.body;

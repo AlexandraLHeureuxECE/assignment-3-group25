@@ -128,7 +128,7 @@
             const studentsContainer = document.getElementById('studentsContainer');
 
 
-            fetch(`http://localhost:3000/get-mentor-courses?mentorId=${mentorId}`)
+            fetch(`http://localhost:3000/get-mentor-courses-attendance?mentorId=${mentorId}`)
                 .then(response => response.json())
                 .then(courses => {
                     courseSelect.innerHTML = '<option value="">Select a Course</option>';
