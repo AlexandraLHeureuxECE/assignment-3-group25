@@ -81,13 +81,12 @@ app.post('/login', (req, res) => {
 
 
 
-// Route to get courses taught by a mentor and the students enrolled in those courses
 app.get('/get-mentor-courses', (req, res) => {
     const mentorId = req.query.mentorId;
     const query = `
-        SELECT c.courseID, c.courseName, s.studentID, s.fName, s.lName
+        SELECT c.courseID, c.semester, c.courseName, s.studentID, s.fName, s.lName
         FROM Course c
-        JOIN Enrollments e ON c.courseID = e.courseID
+        JOIN Enrollments e ON c.courseID = e.courseID AND c.semester = e.semester
         JOIN Student s ON e.studentID = s.studentID
         WHERE c.courseInstructor = ?
     `;
@@ -95,40 +94,32 @@ app.get('/get-mentor-courses', (req, res) => {
         if (err) {
             res.status(500).send('Error in database operation');
         } else {
-            // Group students by course
+            // Group students by course and semester
             const courses = {};
             results.forEach(row => {
-                if (!courses[row.courseID]) {
-                    courses[row.courseID] = {
+                const courseKey = row.courseID + '-' + row.semester;
+                if (!courses[courseKey]) {
+                    courses[courseKey] = {
+                        courseID: row.courseID,
+                        semester: row.semester,
                         courseName: row.courseName,
                         students: []
                     };
                 }
-                courses[row.courseID].students.push({
+                courses[courseKey].students.push({
                     studentID: row.studentID,
                     fName: row.fName,
                     lName: row.lName
                 });
             });
- 
- 
- 
- 
+
             // Convert to array
-            const coursesArray = Object.keys(courses).map(courseID => ({
-                courseID: courseID,
-                courseName: courses[courseID].courseName,
-                students: courses[courseID].students
-            }));
- 
- 
- 
- 
+            const coursesArray = Object.keys(courses).map(courseKey => courses[courseKey]);
+
             res.json(coursesArray);
         }
     });
- });
- 
+});
 
 
 
