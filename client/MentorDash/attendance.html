@@ -5,68 +5,79 @@
     <meta charset="UTF-8">
     <title>Attendance Management System</title>
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-image: url('../bg.jpg'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed; /* Background image will not scroll with the page */
+        }
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
             color: #333;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
         }
-
         .container {
             width: 80%;
-            margin: 0 auto;
+            margin: auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 100vh; /* Minimum height to fill the viewport */
         }
-
-        h1,
-        h2 {
+        h1, h2 {
             text-align: center;
+            color: #1c94c3d7; /* Sky blue */
         }
-
-        label,
-        select,
-        input[type="date"],
-        button {
+        label {
             display: block;
-            width: 100%;
+            margin-bottom: 20px; /* Increase the margin between labels and select elements */
+            color: #333;
+        }
+        select, input[type="date"], button {
+            display: block;
+            width: 100%; /* Make sure the dropdowns are the same length */
             padding: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 10px; /* Increase the margin between dropdowns */
             border-radius: 4px;
             border: 1px solid #ddd;
+            background: rgba(255, 255, 255, 0.8);
         }
-
         button {
-            background-color: #4CAF50;
+            background-color: hsl(197, 52%, 55%); /* Sky blue */
             color: white;
             border: none;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
-
         button:hover {
-            background-color: #45a049;
+            background-color: #1581a5d1; /* Darker shade of sky blue */
         }
-
         .student-checkbox {
             display: flex;
             align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: 15px;
         }
-
+        .student-checkbox label {
+            flex-grow: 1;
+        }
         .student-checkbox input[type="checkbox"] {
+            width: 20px;
             margin-right: 10px;
         }
-
         #attendanceListContainer {
             margin-top: 20px;
         }
-
         #attendanceListContainer ul {
             list-style-type: none;
             padding: 0;
         }
     </style>
+       
 </head>
 
 <body>
