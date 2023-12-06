@@ -9,7 +9,6 @@
     <title>Progress Reports - Student Dashboard</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-image: url('/client/bg.jpg');
@@ -55,7 +54,7 @@
         .progress-report {
             width: 60%;
             /* Adjust the width as needed */
-            background-color: rgba(255, 255, 255, 0.5);
+            background-color: rgba(255, 255, 255, 0.7);
             border: 1px solid #ddd;
             padding: 10px;
             margin-bottom: 10px;
@@ -79,7 +78,7 @@
         .final-grade,
         .overall-average {
             width: 60%;
-            background-color: rgba(255, 255, 255, 0.5);
+            background-color: rgba(255, 255, 255, 0.7);
             border: 1px solid #ddd;
             padding: 10px;
             margin-bottom: 10px;
@@ -96,6 +95,15 @@
 
         .course-container {
             margin-bottom: 20px;
+        }
+
+        .dashboard-link {
+            color: aliceblue;
+            text-decoration: none; /* Remove underline */
+        }
+
+        .dashboard-link:hover {
+            color: aliceblue;
         }
     </style>
 </head>
@@ -134,7 +142,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             var user = JSON.parse(localStorage.getItem('user'));
             if (user) {
-                document.getElementById('dashboardTitle').textContent = `${user.fName} ${user.lName}'s DASHBOARD`;
+                document.getElementById('dashboardTitle').innerHTML = `<a href="../studentDash.html" class="dashboard-link no-underline">${user.fName} ${user.lName}'s DASHBOARD</a>`;
             }
             document.getElementById('logoutLink').addEventListener('click', logoutUser);
 

@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
     <title>Course Enrollment - LMS</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-image: url('/client/bg.jpg');
@@ -15,14 +15,28 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-position: center center;
-            color: #f5f5f5;
         }
+
 
         header {
             background-color: rgba(110, 121, 124, 0.856);
             color: aliceblue;
+            outline: 2px solid #f7f7f7;
             padding: 20px;
-            text-align: center;
+        }
+
+
+        #dashboardTitle {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+
+        .dashboard-container {
+            background: url('/client/bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #f5f5f5;
+            padding: 20px;
         }
 
         .course-container {
@@ -75,10 +89,34 @@
             border: 1px solid #ddd;
             background-color: rgba(255, 255, 255, 0.9);
         }
+
+        .dashboard-link {
+            color: aliceblue;
+            text-decoration: none; /* Remove underline */
+        }
+
+        .dashboard-link:hover {
+            color: aliceblue;
+        }
     </style>
 </head>
 
 <body>
+    <header>
+        <h1 id="dashboardTitle"></h1>
+        <nav>
+            <ul>
+                <li><a href="courses.html">Courses</a></li>
+                <li class="separator">|</li>
+                <li><a href="enrollments.html">Enrollments</a></li>
+                <li class="separator">|</li>
+                <li><a href="progressReports.html">Progress Reports</a></li>
+                <li class="separator">|</li>
+                <li><a href="javascript:void(0);" id="logoutLink" class="dashboard-link">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <h2 style="text-align:center;">Offered Courses</h2>
     <div class="search-container">
         <input type="text" id="searchBox" class="search-box" onkeyup="filterCourses()"
@@ -89,86 +127,91 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-    let coursesData = [];
+                    
+            let coursesData = [];
 
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user || !user.id) {
-        console.error('User ID is not available.');
-        return;
-    }
-    console.log("Student ID: ", user.id);
-
-    fetch('http://localhost:3000/get-all-courses')
-        .then(response => response.json())
-        .then(courses => {
-            coursesData = courses.sort((a, b) => {
-                let nameA = `${a.fName} ${a.lName}`.toLowerCase();
-                let nameB = `${b.fName} ${b.lName}`.toLowerCase();
-                return nameA.localeCompare(nameB); // Sort by mentor name
-            });
-            displayCourses(coursesData);
-        })
-        .catch(error => {
-            console.error("Error fetching courses: ", error);
-        });
-
-    function displayCourses(courses) {
-        const container = document.getElementById('coursesContainer');
-        container.innerHTML = '';
-        courses.forEach(course => {
-            const courseElement = document.createElement('div');
-            courseElement.className = 'course';
-            courseElement.innerHTML = `
-                <h3 class="course-title">${course.courseName}</h3>
-                <p class="course-description">${course.courseDescription}</p>
-                <p class="course-mentor">Mentor: ${course.fName} ${course.lName}</p>
-                <p class="course-semester">Semester: ${course.semester}</p>
-                <button onclick='enroll(${course.courseID}, "${course.semester}")'>Enroll</button>`;
-            container.appendChild(courseElement);
-        });
-    }
-
-    window.filterCourses = function () {
-        const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-        const filteredCourses = coursesData.filter(course =>
-            course.courseName.toLowerCase().includes(searchTerm)
-        );
-        displayCourses(filteredCourses);
-    };
-
-            // Enroll function
-            window.enroll = function (courseId, semester) {
-                console.log("Enrolling in course with ID: ", courseId, " for semester ", semester);
-                const enrollmentData = {
-                    studentId: user.id, // Use the studentId from localStorage
-                    courseId: courseId,
-                    semester: semester
-                };
-
-                fetch('http://localhost:3000/enroll-course', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(enrollmentData)
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            // Handle non-OK responses by reading the text instead of parsing as JSON
-                            return response.text().then(text => { throw new Error(text) });
-                        }
-                        return response.text(); // Assuming the server always responds with text
-                    })
-                    .then(text => {
-                        console.log('Enrollment success:', text);
-                        alert('Enrollment successful!');
-                    })
-                    .catch(error => {
-                        console.error('Enrollment error:', error);
-                        alert('Error during enrollment: ' + error.message);
-                    });
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || !user.id) {
+                console.error('User ID is not available.');
+                return;
             }
-        });
+            console.log("Student ID: ", user.id);
+
+            // Set the dashboard title with the student's name
+            document.getElementById('dashboardTitle').innerHTML = `<a href="../studentDash.html" class="dashboard-link no-underline">${user.fName} ${user.lName}'s DASHBOARD</a>`;
+            console.log("Student ID: ", user.id);
+
+            fetch('http://localhost:3000/get-all-courses')
+                .then(response => response.json())
+                .then(courses => {
+                    coursesData = courses.sort((a, b) => {
+                        let nameA = `${a.fName} ${a.lName}`.toLowerCase();
+                        let nameB = `${b.fName} ${b.lName}`.toLowerCase();
+                        return nameA.localeCompare(nameB); // Sort by mentor name
+                    });
+                    displayCourses(coursesData);
+                })
+                .catch(error => {
+                    console.error("Error fetching courses: ", error);
+                });
+
+            function displayCourses(courses) {
+                const container = document.getElementById('coursesContainer');
+                container.innerHTML = '';
+                courses.forEach(course => {
+                    const courseElement = document.createElement('div');
+                    courseElement.className = 'course';
+                    courseElement.innerHTML = `
+                        <h3 class="course-title">${course.courseName}</h3>
+                        <p class="course-description">${course.courseDescription}</p>
+                        <p class="course-mentor">Mentor: ${course.fName} ${course.lName}</p>
+                        <p class="course-semester">Semester: ${course.semester}</p>
+                        <button onclick='enroll(${course.courseID}, "${course.semester}")'>Enroll</button>`;
+                    container.appendChild(courseElement);
+                });
+            }
+
+            window.filterCourses = function () {
+                const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+                const filteredCourses = coursesData.filter(course =>
+                    course.courseName.toLowerCase().includes(searchTerm)
+                );
+                displayCourses(filteredCourses);
+            };
+
+                    // Enroll function
+                    window.enroll = function (courseId, semester) {
+                        console.log("Enrolling in course with ID: ", courseId, " for semester ", semester);
+                        const enrollmentData = {
+                            studentId: user.id, // Use the studentId from localStorage
+                            courseId: courseId,
+                            semester: semester
+                        };
+
+                        fetch('http://localhost:3000/enroll-course', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(enrollmentData)
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    // Handle non-OK responses by reading the text instead of parsing as JSON
+                                    return response.text().then(text => { throw new Error(text) });
+                                }
+                                return response.text(); // Assuming the server always responds with text
+                            })
+                            .then(text => {
+                                console.log('Enrollment success:', text);
+                                alert('Enrollment successful!');
+                            })
+                            .catch(error => {
+                                console.error('Enrollment error:', error);
+                                alert('Error during enrollment: ' + error.message);
+                            });
+                    }
+                });
     </script>
 </body>
 
