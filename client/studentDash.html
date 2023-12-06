@@ -1,162 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* Add CSS styles for the containers */
-        .dashboard-container {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-            border-radius: 10px;
-        }
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="style.css">
+   <style>
+       /* Add CSS styles for the containers */
+       .dashboard-container {
+           display: flex;
+           justify-content: space-between;
+           padding: 20px;
+           border-radius: 10px;
+       }
 
-        .announcement-container {
-            flex: 2; /* Make the announcement container wider */
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.9); /* See-through white background */
-            border: 1px solid #ccc;
-            border-radius: 10px;
-        }
 
-        .assessment-container {
-            flex: 1; /* Make the assessment container narrower */
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.9); /* See-through white background */
-            border: 1px solid #ccc;
-            border-radius: 10px;
-        }
+       .announcement-container {
+           flex: 2; /* Make the announcement container wider */
+           padding: 20px;
+           background-color: rgba(255, 255, 255, 0.9); /* See-through white background */
+           border: 1px solid #ccc;
+           border-radius: 10px;
+       }
 
-        /* Style for headings */
-        h1,
-        h2,
-        h3 {
-            margin-top: 0;
-            font-size: 1.5rem;
-            font-weight: bold; /* Bolded headers */
-        }
 
-        /* Style for announcement and assessment content */
-        .announcement,
-        .assessment {
-            background-color: transparent; /* Transparent background for content */
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px; /* Add some spacing between announcements/assessments */
-        }
+       .assessment-container {
+           flex: 1; /* Make the assessment container narrower */
+           padding: 20px;
+           background-color: rgba(255, 255, 255, 0.9); /* See-through white background */
+           border: 1px solid #ccc;
+           border-radius: 10px;
+       }
 
-        /* Style for announcement and assessment text */
-        .announcement-text,
-        .assessment-text {
-            margin: 0;
-            color: #000; /* Black text color for better contrast */
-            font-size: 1rem;
-            line-height: 1.4;
-        }
 
-        /* Darken the text further */
-        .announcement-title,
-        .announcement-header,
-        .announcement-date,
-        .announcement-mentor {
-            color: #333; /* Darker text color for these elements */
-        }
+       /* Style for headings */
+       h1,
+       h2,
+       h3 {
+           margin-top: 0;
+           font-size: 1.5rem;
+           font-weight: bold; /* Bolded headers */
+       }
 
-        /* Checkbox style for assessments */
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-        }
 
-        .checkbox-label {
-            margin-left: 10px;
-            font-size: 1rem;
-            color: #000;
-        }
+       /* Style for announcement and assessment content */
+       .announcement,
+       .assessment {
+           background-color: transparent; /* Transparent background for content */
+           border-radius: 5px;
+           padding: 10px;
+           margin-bottom: 10px; /* Add some spacing between announcements/assessments */
+       }
 
-        .checkbox-input {
-            margin-right: 5px;
-            width: 20px;
-            height: 20px;
-        }
-    </style>
-    <title>Student Dashboard - LMS</title>
+
+       /* Style for announcement and assessment text */
+       .announcement-text,
+       .assessment-text {
+           margin: 0;
+           color: #000; /* Black text color for better contrast */
+           font-size: 1rem;
+           line-height: 1.4;
+       }
+
+
+       /* Darken the text further */
+       .announcement-title,
+       .announcement-header,
+       .announcement-date,
+       .announcement-mentor {
+           color: #333; /* Darker text color for these elements */
+       }
+
+
+       /* Checkbox style for assessments */
+       .checkbox-container {
+           display: flex;
+           align-items: center;
+       }
+
+
+       .checkbox-label {
+           margin-left: 10px;
+           font-size: 1rem;
+           color: #000;
+       }
+
+
+       .checkbox-input {
+           margin-right: 5px;
+           width: 20px;
+           height: 20px;
+       }
+   </style>
+   <title>Student Dashboard - LMS</title>
 </head>
 
+
 <body>
-    <header>
-        <h1 id="dashboardTitle">STUDENT DASHBOARD</h1>
-        <nav>
-            <ul>
-                <li><a href="studentDash/courses.html">Courses</a></li>
-                <li class="separator">|</li>
-                <li><a href="studentDash/enrollments.html">Enrollments</a></li>
-                <li class="separator">|</li>
-                <li><a href="studentDash/progressReports.html">Progress Reports</a></li>
-                <li class="separator">|</li>
-                <li><a href="javascript:void(0);" id="logoutLink" class="dashboard-link">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+   <header>
+       <h1 id="dashboardTitle">STUDENT DASHBOARD</h1>
+       <nav>
+           <ul>
+               <li><a href="studentDash/courses.html">Courses</a></li>
+               <li class="separator">|</li>
+               <li><a href="studentDash/enrollments.html">Enrollments</a></li>
+               <li class="separator">|</li>
+               <li><a href="studentDash/progressReports.html">Progress Reports</a></li>
+               <li class="separator">|</li>
+               <li><a href="javascript:void(0);" id="logoutLink" class="dashboard-link">Logout</a></li>
+           </ul>
+       </nav>
+   </header>
 
-    <main class="dashboard-container">
-        <div class="announcement-container">
-            <h2>Latest Announcement</h2>
-            <div class="announcement">
-                <h3 class="announcement-title">End-of-term project</h3>
-                <p class="announcement-header">Reminders</p>
-                <p class="announcement-date">Date: 2023-01-01</p>
-                <p class="announcement-mentor">Mentor: Sister Mary</p>
-                <p class="announcement-text">Reminder: End-of-term project presentations are scheduled for next week. Please ensure you are prepared and have submitted all necessary materials.</p>
-            </div>
 
-            <!-- Add a box around each announcement -->
-            <div class="announcement">
-                <h3 class="announcement-title">Another Announcement</h3>
-                <p class="announcement-header">Important Notice</p>
-                <p class="announcement-date">Date: 2023-02-15</p>
-                <p class="announcement-mentor">Mentor: Brother John</p>
-                <p class="announcement-text">This is another important announcement for students. Please take note of the details.</p>
-            </div>
-        </div>
+   <main class="dashboard-container">
+       <div class="announcement-container">
+           <h2>Latest Announcement</h2>
+           <div class="announcement">
+               <h3 class="announcement-title">End-of-term project</h3>
+               <p class="announcement-header">Reminders</p>
+               <p class="announcement-date">Date: 2023-01-01</p>
+               <p class="announcement-mentor">Mentor: Sister Mary</p>
+               <p class="announcement-text">Reminder: End-of-term project presentations are scheduled for next week. Please ensure you are prepared and have submitted all necessary materials.</p>
+           </div>
 
-        <div class="assessment-container">
-            <h2>Upcoming Assessments</h2>
-            <div class="assessment">
-                <!-- Upcoming assessments content goes here -->
-                <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox-input">
-                    <label class="checkbox-label">Assignment 3: Due on Sunday at 11:59 PM</label>
-                </div>
 
-                <div class="checkbox-container">
-                    <input type="checkbox" class="checkbox-input">
-                    <label class="checkbox-label">Quiz 2: Due on Friday at 3:00 PM</label>
-                </div>
-            </div>
-        </div>
-    </main>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var user = JSON.parse(localStorage.getItem('user'));
-            if (user) {
-                document.getElementById('dashboardTitle').textContent = `${user.fName} ${user.lName}'s DASHBOARD`;
-            }
-            document.getElementById('logoutLink').addEventListener('click', logoutUser); // If using link
+           <!-- Add a box around each announcement -->
+           <div class="announcement">
+               <h3 class="announcement-title">Another Announcement</h3>
+               <p class="announcement-header">Important Notice</p>
+               <p class="announcement-date">Date: 2023-02-15</p>
+               <p class="announcement-mentor">Mentor: Brother John</p>
+               <p class="announcement-text">This is another important announcement for students. Please take note of the details.</p>
+           </div>
+       </div>
 
-            function logoutUser() {
-                // Clear user data from local storage
-                localStorage.removeItem('user');
 
-                // Redirect to the login page
-                window.location.href = 'index.html';
-            }
-        });
+       <div class="assessment-container">
+           <h2>Upcoming Assessments</h2>
+           <div class="assessment">
+               <!-- Upcoming assessments content goes here -->
+               <div class="checkbox-container">
+                   <input type="checkbox" class="checkbox-input">
+                   <label class="checkbox-label">Assignment 3: Due on Sunday at 11:59 PM</label>
+               </div>
 
-    </script>
+
+               <div class="checkbox-container">
+                   <input type="checkbox" class="checkbox-input">
+                   <label class="checkbox-label">Quiz 2: Due on Friday at 3:00 PM</label>
+               </div>
+           </div>
+       </div>
+   </main>
+   <script>
+       document.addEventListener('DOMContentLoaded', function () {
+           var user = JSON.parse(localStorage.getItem('user'));
+           if (user) {
+               document.getElementById('dashboardTitle').textContent = `${user.fName} ${user.lName}'s DASHBOARD`;
+           }
+           document.getElementById('logoutLink').addEventListener('click', logoutUser); // If using link
+
+
+           function logoutUser() {
+               // Clear user data from local storage
+               localStorage.removeItem('user');
+
+
+               // Redirect to the login page
+               window.location.href = 'index.html';
+           }
+       });
+
+
+   </script>
 </body>
 
+
 </html>
+
+
+
+
+
+
