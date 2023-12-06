@@ -6,15 +6,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Enrollment - LMS</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('/client/bg.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
+            color: #f5f5f5;
+        }
+
+        header {
+            background-color: rgba(110, 121, 124, 0.856);
+            color: aliceblue;
+            padding: 20px;
+            text-align: center;
+        }
+
         .course-container {
             width: 80%;
             margin: 20px auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.9);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
 
         .course {
+            background-color: rgba(255, 255, 255, 0.5);
             border: 1px solid #ddd;
             padding: 10px;
             margin-bottom: 10px;
@@ -23,18 +44,18 @@
         .course-title {
             font-size: 20px;
             color: #333;
+            margin-bottom: 5px;
         }
 
-        .course-description,
-        .course-mentor {
-            margin-top: 5px;
+        .course-description, .course-mentor {
             font-style: italic;
+            color: #333;
         }
 
         button {
             padding: 10px;
             margin-top: 10px;
-            background-color: #5cb85c;
+            background-color: #5c8fb8;
             color: white;
             border: none;
             cursor: pointer;
@@ -52,6 +73,7 @@
             width: 300px;
             border-radius: 4px;
             border: 1px solid #ddd;
+            background-color: rgba(255, 255, 255, 0.9);
         }
     </style>
 </head>
