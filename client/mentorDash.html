@@ -6,27 +6,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>LMS - Mentor Dashboard</title>
+    <style>
+        /* CSS for flexbox layout */
+        .dashboard-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .announcement-container {
+            flex: 2; /* Takes up more space */
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .reminder-container {
+            flex: 1; /* Takes up less space */
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            margin-left: 20px; /* Add margin to create space between containers */
+        }
+    </style>
 </head>
 
 <body>
-    <div class="mentor-dashboard">
+    <header>
         <h1 id="dashboardTitle">MENTOR DASHBOARD</h1>
-        <nav class="dashboard-menu">
+        <nav>
             <ul>
-                <li><a href="MentorDash/course-content.html" class="dashboard-link">Course Content</a></li>
+                <li><a href="MentorDash/course-content.html">Course Content</a></li>
                 <li class="separator">|</li>
-                <li><a href="MentorDash/post-announcements.html" class="dashboard-link">Post Announcements</a></li>
+                <li><a href="MentorDash/post-announcements.html">Post Announcements</a></li>
                 <li class="separator">|</li>
-                <li><a href="MentorDash/attendance.html" class="dashboard-link">Attendance</a></li>
+                <li><a href="MentorDash/attendance.html">Attendance</a></li>
                 <li class="separator">|</li>
-                <li><a href="MentorDash/mentor-courses.html" class="dashboard-link">Courses</a></li>
+                <li><a href="MentorDash/mentor-courses.html">Courses</a></li>
                 <li class="separator">|</li>
-                <li><a href="MentorDash/progress-reports.html" class="dashboard-link">Progress Reports</a></li>
+                <li><a href="MentorDash/progress-reports.html">Progress Reports</a></li>
                 <li class="separator">|</li>
                 <li><a href="javascript:void(0);" id="logoutLink" class="dashboard-link">Logout</a></li>
             </ul>
         </nav>
-    </div>
+    </header>
+
+    <main class="dashboard-container">
+        <div class="announcement-container">
+            <h2>Announcements</h2>
+            <div class="announcement">
+                <h3 class="announcement-title">Important Announcement</h3>
+                <p class="announcement-text">Please review the updated course schedule for the next month.</p>
+            </div>
+
+            <div class="announcement">
+                <h3 class="announcement-title">Reminder for Meeting</h3>
+                <p class="announcement-text">Don't forget the mentor meeting scheduled for tomorrow at 2:00 PM.</p>
+            </div>
+        </div>
+
+        <div class="reminder-container">
+            <h2>Reminders</h2>
+            <div class="reminder">
+                <input type="checkbox" class="checkbox-input">
+                <label class="checkbox-label">
+                    <span style="font-size: 20px; color: #000;">Post Lecture:</span> Please post the lecture slides for next week's class as soon as possible.
+                </label>
+            </div>
+
+            <div class="reminder">
+                <input type="checkbox" class="checkbox-input">
+                <label class="checkbox-label">
+                    <span style="font-size: 20px; color: #000;">Post Assessment:</span> Don't forget to create and post the upcoming quiz on Friday.
+                </label>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        /* Add background color behind all text */
+        .announcement-container,
+        .reminder-container {
+            background-color: rgba(255, 255, 255, 0.9); /* See-through white background */
+            padding: 10px; /* Add padding for readability */
+            border-radius: 5px;
+        }
+
+        /* Make text darker for better visibility */
+        .announcement-title,
+        .announcement-text,
+        .reminder-title,
+        .reminder-text {
+            color: #333; /* Darker text color */
+        }
+
+        /* Style for checkboxes and labels */
+        .checkbox-input {
+            margin-right: 5px;
+        }
+
+        .checkbox-label {
+            vertical-align: middle;
+        }
+    </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var user = JSON.parse(localStorage.getItem('user'));
